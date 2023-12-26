@@ -4,11 +4,11 @@
 
 using namespace std;
 
-extern string defaultStr;
+extern const string L1B1Str;
 
 int main() {
-    Map *defaultMap = new Map(defaultStr, nullptr);
-    cout << defaultMap->getMapStr() << endl;
+    Map *L1B1Map = new Map(L1B1Str, nullptr);
+    cout << L1B1Map->getMapStr() << endl;
 
     return 0;
 }
