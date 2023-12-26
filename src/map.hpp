@@ -5,12 +5,14 @@
 #ifndef PROJ_MAP_H
 #define PROJ_MAP_H
 #include <string>
+#include <vector>
 
 using namespace std;
 
 class Map {
 public:
-    string mapStr;
+    string mapStr;  // 初始的字符串，不随游戏变化
+    vector<vector<string>> mapTable;
     Map *father;
     int rows;
     int cols;
@@ -19,20 +21,14 @@ public:
 
     Map(string mapStr, Map *father);
 
+    void initializeMapTable();
+
     void printMap() const;
 
-    int getPosElement(int row, int col) const;
+    string getPosElement(int row, int col) const;
 
-    enum MapElement {
-        WALL = '#',
-        EMPTY = '.',
-        BOX = 'O',
-        PLAYER = 'P',
-        STORAGE_POINT = '-',
-        CHECK_POINT = '=',
-        BOX_STORED= 'o',
-        PLAYER_CHECKED = 'p'
-    };
+    void swapElements(int row1, int col1, int row2, int col2);
+
 };
 
 

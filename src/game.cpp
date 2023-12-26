@@ -15,38 +15,57 @@ Game::Game(Map *initialMap) : currentMap(initialMap) {
 void Game::printState() {
     cout << endl;
     currentMap->printMap();
-    cout << "map->rows: " << currentMap->rows << "\tmap->cols: " << currentMap->cols << endl;
+    cout << "map->rows: " << currentMap->rows
+         << "\tmap->cols: " << currentMap->cols << endl;
     cout << "player position: (" << playerRow << ", " << playerCol << ")\n";
     cout << endl;
 }
 
-void  Game::handlePlayerMove(char userInput) {
-    int newRow = playerRow;
-    int newCol = playerCol;
+void Game::handlePlayerMove(char userInput) {
+    int rowMove = 0;
+    int colMove = 0;
 
     switch (userInput) {
         case 'w':
-            newRow--;
+            rowMove = -1;
             break;
         case 's':
-            newRow++;
+            rowMove = 1;
             break;
         case 'a':
-            newCol--;
+            colMove = -1;
             break;
         case 'd':
-            newCol++;
+            colMove = 1;
             break;
         default:
             cout << "Invalid input. Please use 'w', 's', 'a', or 'd'." << endl;
             return;
     }
 
-    cout << "new pos: (" << newRow << ", " << newCol << ")\n";
-
-
+    string posElement = currentMap->getPosElement((playerRow + rowMove), (playerCol + colMove));
+    if (posElement.empty()) {
+        cout << "Invalid movement: Out of range." << endl;
+    } else {
+        dealPosElement(posElement, playerRow, playerCol, rowMove, colMove);
+    }
 }
 
+void Game::dealPosElement(string posElement, int row, int col, int rowMove, int colMove) {
+    switch (posElement[0]) {
+        case '#':
+            cout << "Invalid movement: Wall." << endl;
+            break;
+        case 'O':
+            // TODO
+            break;
+        default:
+            currentMap->swapElements(row, col, (row + rowMove), (col + colMove));
+            playerRow = row + rowMove;
+            playerCol = col + colMove;
+            break;
+    }
+}
 
 
 

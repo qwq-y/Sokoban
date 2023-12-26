@@ -18,9 +18,13 @@ public:
 
     void handlePlayerMove(char userInput);
 
+    void dealPosElement(string posElement, int row, int col, int rowMove, int colMove);
+
+    void moveElement(int row, int col, int rowMove, int colMove);
+
     bool checkWinCondition() const;
 
-    bool isValidPosition(int row, int col) const;
+    int isValidPosition(int row, int col) const;
 
     void printState();
 };
