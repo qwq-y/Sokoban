@@ -1,21 +1,42 @@
-# pragma once
+//
+// Created by 86188 on 2023/12/26.
+//
+
+#ifndef PROJ_MAP_H
+#define PROJ_MAP_H
 #include <string>
 
 using namespace std;
 
 class Map {
-    private:
-        string mapStr;
-        Map *father;
+public:
+    string mapStr;
+    Map *father;
+    int rows;
+    int cols;
+    int initialPlayerRow;
+    int initialPlayerCol;
 
-    public:  
-        Map(string mapStr, Map *father) : mapStr(mapStr), father(father) {}
+    Map(string mapStr, Map *father);
 
-        string getMapStr() const {
-            return mapStr;
-        };
+    void printMap() const;
 
-        Map* getFather() const {
-            return father;
-        };
+    int getPosElement(int row, int col) const;
+
+    enum MapElement {
+        WALL = '#',
+        EMPTY = '.',
+        BOX = 'O',
+        PLAYER = 'P',
+        STORAGE_POINT = '-',
+        CHECK_POINT = '=',
+        BOX_STORED= 'o',
+        PLAYER_CHECKED = 'p'
+    };
 };
+
+
+#endif //PROJ_MAP_H
+
+
+

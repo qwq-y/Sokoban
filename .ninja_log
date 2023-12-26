@@ -1,5 +1,23 @@
 # ninja log v5
-4	300	7252756534445092	CMakeFiles/proj.dir/src/config.cpp.obj	fb28d485e02d6538
-4	363	7252763594941287	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
 3	279	7252773287844175	CMakeFiles/proj.dir/src/config.cpp.obj	fb28d485e02d6538
-280	429	7252773289305562	proj.exe	909de5361ffbe6b3
+20	465	7252852043398534	CMakeFiles/proj.dir/src/map.cpp.obj	3b6f6146f3c043f4
+4	461	7252852043348527	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+433	562	7252850033717487	proj.exe	b85374a710831afc
+4	367	7252852674554416	CMakeFiles/proj.dir/src/game.cpp.obj	f27f5c2c11622bcf
+4	257	7252852857239872	CMakeFiles/proj.dir/src/mapStrs.cpp.obj	319f6d00ae5fbe95
+257	393	7252852858579879	proj.exe	b0b8391dbe023c1f
+4	376	7252854078768881	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+377	519	7252854080178866	proj.exe	b0b8391dbe023c1f
+4	386	7252855897682529	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+387	522	7252855899002516	proj.exe	b0b8391dbe023c1f
+5	399	7252856229367209	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+399	531	7252856230657209	proj.exe	b0b8391dbe023c1f
+5	384	7252856636270106	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+384	516	7252856637566079	proj.exe	b0b8391dbe023c1f
+4	389	7252857079283567	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+389	523	7252857080613549	proj.exe	b0b8391dbe023c1f
+13	641	7252858633968004	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+7	648	7252858634048003	CMakeFiles/proj.dir/src/game.cpp.obj	f27f5c2c11622bcf
+649	877	7252858636303687	proj.exe	b0b8391dbe023c1f
+4	394	7252860442925151	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+395	530	7252860444257313	proj.exe	b0b8391dbe023c1f

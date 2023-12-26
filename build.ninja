@@ -44,14 +44,26 @@ cmake_ninja_workdir = C$:/Users/86188/Desktop/C_C++/Project/proj/
 
 build cmake_object_order_depends_target_proj: phony || CMakeFiles/proj.dir
 
-build CMakeFiles/proj.dir/src/config.cpp.obj: CXX_COMPILER__proj_unscanned_ C$:/Users/86188/Desktop/C_C++/Project/proj/src/config.cpp || cmake_object_order_depends_target_proj
-  DEP_FILE = CMakeFiles\proj.dir\src\config.cpp.obj.d
+build CMakeFiles/proj.dir/src/game.cpp.obj: CXX_COMPILER__proj_unscanned_ C$:/Users/86188/Desktop/C_C++/Project/proj/src/game.cpp || cmake_object_order_depends_target_proj
+  DEP_FILE = CMakeFiles\proj.dir\src\game.cpp.obj.d
   FLAGS = -std=gnu++14 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\proj.dir
   OBJECT_FILE_DIR = CMakeFiles\proj.dir\src
 
 build CMakeFiles/proj.dir/src/main.cpp.obj: CXX_COMPILER__proj_unscanned_ C$:/Users/86188/Desktop/C_C++/Project/proj/src/main.cpp || cmake_object_order_depends_target_proj
   DEP_FILE = CMakeFiles\proj.dir\src\main.cpp.obj.d
+  FLAGS = -std=gnu++14 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\proj.dir
+  OBJECT_FILE_DIR = CMakeFiles\proj.dir\src
+
+build CMakeFiles/proj.dir/src/map.cpp.obj: CXX_COMPILER__proj_unscanned_ C$:/Users/86188/Desktop/C_C++/Project/proj/src/map.cpp || cmake_object_order_depends_target_proj
+  DEP_FILE = CMakeFiles\proj.dir\src\map.cpp.obj.d
+  FLAGS = -std=gnu++14 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\proj.dir
+  OBJECT_FILE_DIR = CMakeFiles\proj.dir\src
+
+build CMakeFiles/proj.dir/src/mapStrs.cpp.obj: CXX_COMPILER__proj_unscanned_ C$:/Users/86188/Desktop/C_C++/Project/proj/src/mapStrs.cpp || cmake_object_order_depends_target_proj
+  DEP_FILE = CMakeFiles\proj.dir\src\mapStrs.cpp.obj.d
   FLAGS = -std=gnu++14 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\proj.dir
   OBJECT_FILE_DIR = CMakeFiles\proj.dir\src
@@ -64,7 +76,7 @@ build CMakeFiles/proj.dir/src/main.cpp.obj: CXX_COMPILER__proj_unscanned_ C$:/Us
 #############################################
 # Link the executable proj.exe
 
-build proj.exe: CXX_EXECUTABLE_LINKER__proj_ CMakeFiles/proj.dir/src/config.cpp.obj CMakeFiles/proj.dir/src/main.cpp.obj
+build proj.exe: CXX_EXECUTABLE_LINKER__proj_ CMakeFiles/proj.dir/src/game.cpp.obj CMakeFiles/proj.dir/src/main.cpp.obj CMakeFiles/proj.dir/src/map.cpp.obj CMakeFiles/proj.dir/src/mapStrs.cpp.obj
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\proj.dir
   POST_BUILD = cd .
