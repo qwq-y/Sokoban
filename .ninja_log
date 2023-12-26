@@ -1,0 +1,5 @@
+# ninja log v5
+12	94	7252695990080316	CMakeFiles/proj.dir/src/map.cpp.obj	3b6f6146f3c043f4
+1	462	7252695993788357	CMakeFiles/proj.dir/src/config.cpp.obj	fb28d485e02d6538
+7	572	7252695994880137	CMakeFiles/proj.dir/src/main.cpp.obj	ff0cdb1c1da6d0e6
+573	749	7252695996636062	proj.exe	6e95bc6615a2a795

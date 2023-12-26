@@ -1,0 +1,3 @@
+C:/Users/86188/Desktop/C_C++/Project/proj/CMakeFiles/proj.dir
+C:/Users/86188/Desktop/C_C++/Project/proj/CMakeFiles/edit_cache.dir
+C:/Users/86188/Desktop/C_C++/Project/proj/CMakeFiles/rebuild_cache.dir
