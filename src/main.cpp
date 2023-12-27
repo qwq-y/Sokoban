@@ -24,7 +24,11 @@ int main() {
         cin.ignore();  // 忽略换行符
         userInput = tolower(userInput);
 
-        // TODO: 处理其他无效输入
+        // 处理无效输入
+        if (!(userInput == 'w' || userInput == 'a' || userInput == 's' || userInput == 'd' || userInput == 'q')) {
+            std::cout << "Invalid input. Please enter 'w', 'a', 's', 'd', or 'q'." << std::endl;
+            continue;  // 继续循环，等待有效输入
+        }
 
         if (userInput == 'q') { // 使用 q 退出
             cout << "\nQuit.\n";
