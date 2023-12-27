@@ -15,8 +15,8 @@ Game::Game(Map *initialMap) : currentMap(initialMap) {
 void Game::printState() {
     cout << endl;
     currentMap->printMap();
-    cout << "map->rows: " << currentMap->rows
-         << "\tmap->cols: " << currentMap->cols << endl;
+    cout << "rows: " << currentMap->rows
+         << "\tcols: " << currentMap->cols << endl;
     cout << "player position: (" << playerRow << ", " << playerCol << ")\n";
     cout << endl;
 }
@@ -43,29 +43,121 @@ void Game::handlePlayerMove(char userInput) {
             return;
     }
 
-    string posElement = currentMap->getPosElement((playerRow + rowMove), (playerCol + colMove));
+    int newRow = playerRow + rowMove;
+    int newCol = playerCol + colMove;
+
+    string posElement = currentMap->getPosElement(newRow, newCol);
     if (posElement.empty()) {
         cout << "Invalid movement: Out of range." << endl;
     } else {
-        dealPosElement(posElement, playerRow, playerCol, rowMove, colMove);
+        dealPosElement(posElement, playerRow, playerCol, newRow, newCol);
     }
 }
 
-void Game::dealPosElement(string posElement, int row, int col, int rowMove, int colMove) {
+void Game::dealPosElement(string posElement, int row, int col, int newRow, int newCol) {
     switch (posElement[0]) {
         case '#':
             cout << "Invalid movement: Wall." << endl;
             break;
+        case 'B':
+        case 'b':
+        case 'I':
+        case 'i':
         case 'O':
-            // TODO
+        case 'o':
+            // 目前把 O I B 类箱子都当作普通箱子处理
+            if (!updateMapToPushBox(newRow, newCol)) {  // 目前只有遇到 # 会返回 false，未考虑贪吃蛇、自含、出界等
+                cout << "Invalid movement: Wall." << endl;
+            }
             break;
-        default:
-            currentMap->swapElements(row, col, (row + rowMove), (col + colMove));
-            playerRow = row + rowMove;
-            playerCol = col + colMove;
+        default:   // . - =
+            updateMapToMove(newRow, newCol);
             break;
     }
 }
 
+void Game::updateMapToMove(int newRow, int newCol) {
+    // 玩家行走一步，更新地图
+    string initOrigElement = currentMap->initMapTable[playerRow][playerCol];
+    if (initOrigElement[0] == 'P' || initOrigElement[0] == 'O' ||
+        initOrigElement[0] == 'B' || initOrigElement[0] == 'I') {
+        currentMap->mapTable[playerRow][playerCol] = '.';
+    } else {  // . - =
+        currentMap->mapTable[playerRow][playerCol] = initOrigElement;
+    }
+
+    string initDestElement = currentMap->initMapTable[newRow][newCol];
+    if (initDestElement == "=") {
+        currentMap->mapTable[newRow][newCol] = 'p';
+    } else {
+        currentMap->mapTable[newRow][newCol] = 'P';
+    }
+
+    playerRow = newRow;
+    playerCol = newCol;
+}
+
+bool Game::updateMapToPushBox(int newRow, int newCol) {
+    int rowMove = newRow - playerRow;
+    int colMove = newCol - playerCol;
+    int rowPointer = newRow;
+    int colPointer = newCol;
+    char charPointer = currentMap->mapTable[rowPointer][colPointer][0];
+    vector<pair<int, int>> boxPositions;
+
+    while (charPointer == 'O' || charPointer == 'o' ||
+           charPointer == 'B' || charPointer == 'b' ||
+           charPointer == 'I' || charPointer == 'i') {
+
+        boxPositions.push_back(std::make_pair(rowPointer, colPointer));
+
+        rowPointer = rowPointer + rowMove;
+        colPointer = colPointer + colMove;
+        charPointer = currentMap->mapTable[rowPointer][colPointer][0];
+    }
+
+    if (charPointer == '#') {
+        return false;
+    }
+
+    // 移动所有箱子
+    for (pair<int, int> &pos: boxPositions) {
+        string box = currentMap->mapTable[pos.first][pos.second];
+        string initDest = currentMap->initMapTable[pos.first + rowMove][pos.second + colMove];
+
+        cout << "box " << box << ": (" << pos.first << ", " << pos.second << ")" << endl;
+
+        if (initDest[0] == '-') {
+            box[0] = tolower(box[0]);
+        } else {
+            box[0] = toupper(box[0]);
+        }
+        currentMap->mapTable[pos.first + rowMove][pos.second + colMove] = box;
+    }
+
+    // 移动玩家
+    updateMapToMove(newRow, newCol);
+    playerRow = newRow;
+    playerCol = newCol;
+
+    return true;
+}
+
+bool Game::checkWinCondition() const {
+    // 目前只考虑了单张地图
+    for (int i = 0; i < currentMap->rows; i++) {
+        for (int j = 0; j < currentMap->cols; j++) {
+            string initElement = currentMap->getInitPosElement(i, j);
+            string currentElement = currentMap->getPosElement(i, j);
+            if (initElement[0] == '-' && (currentElement[0] != 'i' && currentElement[0] != 'b' && currentElement[0] != 'o')) {
+                return false;
+            }
+            if (initElement[0] == '=' && currentElement[0] != 'p') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 

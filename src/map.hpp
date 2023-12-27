@@ -13,6 +13,7 @@ class Map {
 public:
     string mapStr;  // 初始的字符串，不随游戏变化
     vector<vector<string>> mapTable;
+    vector<vector<string>> initMapTable;  // 初始的地图，不随游戏变化
     Map *father;
     int rows;
     int cols;
@@ -27,7 +28,7 @@ public:
 
     string getPosElement(int row, int col) const;
 
-    void swapElements(int row1, int col1, int row2, int col2);
+    string getInitPosElement(int row, int col) const;
 
 };
 

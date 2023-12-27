@@ -51,6 +51,7 @@ void Map::initializeMapTable() {
         }
 
         mapTable.push_back(lineVec);
+        initMapTable.push_back(lineVec);
     }
 }
 
@@ -74,10 +75,12 @@ string Map::getPosElement(int row, int col) const {
     return mapTable[row][col];
 }
 
-void Map::swapElements(int row1, int col1, int row2, int col2) {
-    cout << "swap: (" << row1 << ", " << col1 << ") " << mapTable[row1][col1]
-         << "\t(" << row2 << ", " << col2 << ") " << mapTable[row2][col2] << endl;
-    swap(mapTable[row1][col1], mapTable[row2][col2]);
+string Map::getInitPosElement(int row, int col) const {
+    if (row < 0 || col < 0 || row >= rows || col >= cols) {
+        return "";
+    }
+    return initMapTable[row][col];
 }
+
 
 

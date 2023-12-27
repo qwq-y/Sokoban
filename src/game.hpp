@@ -20,13 +20,13 @@ public:
 
     void dealPosElement(string posElement, int row, int col, int rowMove, int colMove);
 
-    void moveElement(int row, int col, int rowMove, int colMove);
-
     bool checkWinCondition() const;
 
-    int isValidPosition(int row, int col) const;
-
     void printState();
+
+    void updateMapToMove(int newRow, int newCol);
+
+    bool updateMapToPushBox(int newRow, int newCol);
 };
 
 
