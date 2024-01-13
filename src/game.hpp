@@ -6,28 +6,31 @@
 #define PROJ_GAME_H
 
 #include "map.hpp"
-
-class Game {
+using namespace std;
+class Game
+{
 private:
     Map *currentMap;
-    int playerRow;   // index 从 0 开始，左上角为 (0, 0)
-    int playerCol;
+    int num_of_inplace_box;
+    map<Map *, string> map2name;
+    map<string, Map *> name2map;
+    vector<Bbox *> B_boxs;
+    vector<Ibox *> inf_boxs;
+    Player *p;
 
 public:
-    Game(Map *initialMap);
+    Game(Player *p, map<Map *, string> map2name, map<string, Map *> name2map, vector<Bbox *> B_boxs, vector<Ibox *> inf_boxs) : p(p), map2name(map2name), name2map(name2map), B_boxs(B_boxs), inf_boxs(inf_boxs)
+    {
+        currentMap = p->get_map();
+    }
 
     void handlePlayerMove(char userInput);
-
-    void dealPosElement(string posElement, int row, int col, int rowMove, int colMove);
 
     bool checkWinCondition() const;
 
     void printState();
 
-    void updateMapToMove(int newRow, int newCol);
-
-    bool updateMapToPushBox(int newRow, int newCol);
+    bool Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy,int dir);
 };
 
-
-#endif //PROJ_GAME_H
+#endif // PROJ_GAME_H
