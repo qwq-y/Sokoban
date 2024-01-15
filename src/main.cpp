@@ -3,6 +3,7 @@
 #include <map>
 #include "map.hpp"
 #include "game.hpp"
+#include "mapFile.hpp"
 
 using namespace std;
 
@@ -10,8 +11,7 @@ extern map<string, string> map2box_name;
 extern vector<string *> level[9];
 extern void build_map2box_name();
 
-int main()
-{
+void play() {
     build_map2box_name();
     int lev = 0;
     cout << "Please choose the level(1~8):";
@@ -60,5 +60,33 @@ int main()
         }
     }
 
+};
+
+void testMapFile() {
+    string L1MStr = "# # # # # # # #\n"
+                    "# . . . . = . #\n"
+                    "# . . . . - - #\n"
+                    "# . . # . # # #\n"
+                    "# . O . O . . #\n"
+                    "# . . . P . . #\n"
+                    "# # # # # # # #\n";
+    string saveData = L1MStr;
+    MapFile::saveMapToFile(saveData, "example.map");
+
+    string readData = MapFile::readMapFromFile("example.map");
+    if (!readData.empty()) {
+        std::cout << "Load: \n" << readData;
+    }
+}
+
+int main()
+{
+//    play();
+
+    testMapFile();
+
     return 0;
 }
+
+
+
