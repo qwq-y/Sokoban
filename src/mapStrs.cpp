@@ -27,39 +27,29 @@ string L2B1Str = "# # . # #\n"
                  "# # . # #\n"
                  ". . . # #\n"
                  "# # # # #\n"
-                 "# # # # #\n";
+                 "# # # # #\n";//enter
 
 string L3B1Str = "# # # # # # #\n"
                  "# . . . # . .\n"
                  "# B1 B2 . # P .\n"
                  "# . . . # . .\n"
                  "# = - . # . .\n"
-                 "# # # # # # #\n";
+                 "# # # # # # #\n";//enter, go out
 
 string L3B2Str = ". . .\n"
                  "O . .\n"
                  ". . .\n";
 
-string L4B1Str = "# . . . #\n"
-                 "# P . B2 #\n"
-                 "# . . . #\n"
-                 "# # # # #\n";
+string L4B1Str = "# # # # # # # # #\n"
+                 "# . . . . . # # #\n"
+                 "# . . . . - . = #\n"
+                 "# . . . . . # # #\n"
+                 "# . . B1 . . # # P\n"
+                 "# . . . . . # # #\n"
+                 "# . . . . . # # #\n"
+                 "# BC1 . # # # # # #\n"
+                 "# # # # # # # # #\n";//Multiple reference(Clone)
 
-string L4B2Str = "B3 # . . #\n"
-                 ". . . . #\n"
-                 "# # # # #\n";
-
-string L4B3Str = "# # . # #\n"
-                 ". . . . #\n"
-                 ". . . . #\n"
-                 ". . O - #\n"
-                 "# # # # #\n";
-
-string L4VoidStr = ". . . . .\n"
-                   ". . . . .\n"
-                   ". . = . .\n"
-                   ". . . . .\n"
-                   ". . . . .\n";
 
 string L5B1Str = "# # # # # # # # #\n"
                  "# B1 O B2 B3 O O P O\n"
@@ -67,7 +57,7 @@ string L5B1Str = "# # # # # # # # #\n"
                  "# # . . . . . . #\n"
                  "# # . . . . . . #\n"
                  "# # . . . . . . #\n"
-                 "# # # # # # # # #\n";
+                 "# # # # # # # # #\n";//greedy snake
 
 string L5B2Str = "# # #\n"
                  "# - #\n"
@@ -129,9 +119,6 @@ void build_map2box_name()
     level[3].push_back(&L3B1Str);
     level[3].push_back(&L3B2Str);
     level[4].push_back(&L4B1Str);
-    level[4].push_back(&L4B2Str);
-    level[4].push_back(&L4B3Str);
-    level[4].push_back(&L4VoidStr);
     level[5].push_back(&L5B1Str);
     level[5].push_back(&L5B2Str);
     level[5].push_back(&L5B3Str);
@@ -148,15 +135,13 @@ void build_map2box_name()
     map2box_name[L3B1Str] = "B1";
     map2box_name[L3B2Str] = "B2";
     map2box_name[L4B1Str] = "B1";
-    map2box_name[L4B2Str] = "B2";
-    map2box_name[L4B3Str] = "B3";
-    map2box_name[L4VoidStr] = "VOID";
     map2box_name[L5B1Str] = "B1";
     map2box_name[L5B2Str] = "B2";
     map2box_name[L5B3Str] = "B3";
     map2box_name[L6B1Str] = "B1";
     map2box_name[L6B2Str] = "B2";
     map2box_name[L6B3Str] = "B3";
+    map2box_name[L6B4Str] = "B4";
     map2box_name[L7B1Str] = "B1";
     map2box_name[L8B1Str] = "B1";
 }

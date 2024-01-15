@@ -108,41 +108,89 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step);
     else if (dm->mapTable[dx][dy] == p) // 推到自己了
         push_player = true;
+
     if (!can_move) // 前面的块不能再往前
     {
-        if (dm->mapTable[dx][dy]->get_mark()[0] != 'B' && dm->mapTable[dx][dy]->get_mark()[0] != 'b') // 不是可进入箱子
-            return false;                                                                             // 那么这个物体也动不了
-        string name = dm->mapTable[dx][dy]->get_mark();
-        Map *entering_map = name2map[name];
-        int rows = entering_map->rows;
-        int cols = entering_map->cols;
-        if (dir == 1) // 向上进入，检测B箱的下边
+        bool can_move_in_next = false; // 记录该块是否可以进入前面的块
+
+        // 先看能否进后面的块，不行再考虑自己能不能吞掉后面的块
+        if (dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b') // 是可进入箱子
         {
-            if (entering_map->mapTable[rows - 1][cols / 2]->get_mark()[0] == '#') // 是墙，进不去
-                return false;
-            else
-                return Move(sm, sx, sy, entering_map, rows - 1, cols / 2, dir, this_step);
+            Map *entering_map = name2map[dm->mapTable[dx][dy]->get_mark()];
+            int entering_rows = entering_map->rows;
+            int entering_cols = entering_map->cols;
+            if (dir == 1) // 向上进入，检测B箱的下边
+            {
+                if (entering_map->mapTable[entering_rows - 1][entering_cols / 2]->get_mark()[0] == '#') // 是墙，进不去
+                    can_move_in_next = false;
+                else
+                    can_move_in_next = Move(sm, sx, sy, entering_map, entering_rows - 1, entering_cols / 2, dir, this_step);
+            }
+            else if (dir == 2) // 向右进入，检测B箱的左边
+            {
+                if (entering_map->mapTable[entering_rows / 2][0]->get_mark()[0] == '#') // 是墙，进不去
+                    can_move_in_next = false;
+                else
+                    can_move_in_next = Move(sm, sx, sy, entering_map, entering_rows / 2, 0, dir, this_step);
+            }
+            else if (dir == 3) // 向下进入，检测B箱的上边
+            {
+                if (entering_map->mapTable[0][entering_cols / 2]->get_mark()[0] == '#') // 是墙，进不去
+                    can_move_in_next = false;
+                else
+                    can_move_in_next = Move(sm, sx, sy, entering_map, 0, entering_cols / 2, dir, this_step);
+            }
+            else if (dir == 4) // 向左进入，检测B箱的右边
+            {
+                if (entering_map->mapTable[entering_rows / 2][entering_cols - 1]->get_mark()[0] == '#') // 是墙，进不去
+                    can_move_in_next = false;
+                else
+                    can_move_in_next = Move(sm, sx, sy, entering_map, entering_rows / 2, entering_cols - 1, dir, this_step);
+            }
         }
-        else if (dir == 2) // 向右进入，检测B箱的左边
+        if (can_move_in_next)//进入了前面的箱子
+            return true;
+        else // 考虑是否能吞掉后面的块
         {
-            if (entering_map->mapTable[rows / 2][0]->get_mark()[0] == '#') // 是墙，进不去
+            if (object->get_mark()[0] != 'B' && object->get_mark()[0] != 'b')
+            {
+                cout << object->get_mark() << endl;
                 return false;
+            }
             else
-                return Move(sm, sx, sy, entering_map, rows / 2, 0, dir, this_step);
-        }
-        else if (dir == 3) // 向下进入，检测B箱的上边
-        {
-            if (entering_map->mapTable[0][cols / 2]->get_mark()[0] == '#') // 是墙，进不去
-                return false;
-            else
-                return Move(sm, sx, sy, entering_map, 0, cols / 2, dir, this_step);
-        }
-        else if (dir == 4) // 向左进入，检测B箱的右边
-        {
-            if (entering_map->mapTable[rows / 2][cols - 1]->get_mark()[0] == '#') // 是墙，进不去
-                return false;
-            else
-                return Move(sm, sx, sy, entering_map, rows / 2, cols - 1, dir, this_step);
+            {
+                Map *own_map = name2map[sm->mapTable[sx][sy]->get_mark()];
+                int own_rows = own_map->rows;
+                int own_cols = own_map->cols;
+                if (dir == 1) // 向上吃，检测自己的上边
+                {
+                    if (own_map->mapTable[0][own_cols / 2]->get_mark()[0] == '#') // 是墙，进不去
+                        return false;
+                    else if (!Move(dm, dx, dy, own_map, 0, own_cols / 2, 3, this_step)) // 能吃就吃，再走；不能吃直接返回
+                        return false;
+                }
+                else if (dir == 2) // 向右吃，检测自己的右边
+                {
+                    if (own_map->mapTable[own_rows / 2][own_cols - 1]->get_mark()[0] == '#') // 是墙，进不去
+                        return false;
+                    else if (!Move(dm, dx, dy, own_map, own_rows / 2, own_cols - 1, 4, this_step)) // 先吃进去，再走；不能吃直接返回
+                        return false;
+                }
+                else if (dir == 3) // 向下吃，检测自己的下边
+                {
+                    if (own_map->mapTable[own_rows - 1][own_cols / 2]->get_mark()[0] == '#') // 是墙，进不去
+                        return false;
+                    else if (!Move(dm, dx, dy, own_map, own_rows - 1, own_cols / 2, 1, this_step)) // 先吃进去，再走；不能吃直接返回
+                        return false;
+                }
+                else if (dir == 4) // 向左吃，检测自己的左边
+                {
+                    if (own_map->mapTable[own_rows / 2][0]->get_mark()[0] == '#') // 是墙，进不去
+                        return false;
+                    else if (!Move(dm, dx, dy, own_map, own_rows / 2, 0, 2, this_step)) // 先吃进去，再走；不能吃直接返回
+                        return false;
+                }
+            }
         }
     }
 
@@ -177,7 +225,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         }
     }
     else
-        push_player = false;//重置该状态，以便下一次使用
+        push_player = false; // 重置该状态，以便下一次使用
     // 进入的点的处理
     string initDestElement = dm->initMapTable[dx][dy]->get_mark();
     if ((initDestElement == "=" && mark[0] == 'P') ||
