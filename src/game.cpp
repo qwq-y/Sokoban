@@ -66,14 +66,15 @@ void Game::handlePlayerMove(char userInput)
     int newCol = p->get_pos().second + colMove;
     vector<recorder> this_step;
     Move(currentMap, p->get_pos().first, p->get_pos().second, currentMap, newRow, newCol, direction, this_step);
-    record.push_back(this_step);
+    if (!this_step.empty())
+        record.push_back(this_step);
 }
 
 bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step) // 1上 2右 3下 4 左
 {
-
     cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
-
+    Entity *object = sm->mapTable[sx][sy];
+    string mark = object->get_mark();
     int xMove = 0;
     int yMove = 0;
     if (dir == 1)
@@ -105,7 +106,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         return false;
     else if (dm->mapTable[dx][dy]->get_mark()[0] == 'O' || dm->mapTable[dx][dy]->get_mark()[0] == 'o' || dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b' || dm->mapTable[dx][dy]->get_mark()[1] == 'I' || dm->mapTable[dx][dy]->get_mark()[1] == 'i') // 前方还有箱子
         can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step);
-
+    else if (dm->mapTable[dx][dy] == p) // 推到自己了
+        push_player = true;
     if (!can_move) // 前面的块不能再往前
     {
         if (dm->mapTable[dx][dy]->get_mark()[0] != 'B' && dm->mapTable[dx][dy]->get_mark()[0] != 'b') // 不是可进入箱子
@@ -145,33 +147,37 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
     }
 
     // 单体移动
-    Entity *object = sm->mapTable[sx][sy];
-    string mark = object->get_mark();
+
     // 离开的点的处理
-    string initOrigElement = sm->initMapTable[sx][sy]->get_mark();
-    if (initOrigElement[0] == 'P' || initOrigElement[0] == 'O' ||
-        initOrigElement[0] == 'B' || initOrigElement[1] == 'I')
+    if (object != p || push_player == false) // 判定是否推到过自己，如果推到过，那么player移动时就不更新离开的点了
     {
-        recorder rec_leave;
-        rec_leave.now = sm;
-        rec_leave.x = sx;
-        rec_leave.y = sy;
-        rec_leave.before = sm->mapTable[sx][sy];
-        sm->mapTable[sx][sy] = sm->initMapTable[sx][sy]->get_prepared_empty();
-        rec_leave.after = sm->mapTable[sx][sy];
-        this_step.push_back(rec_leave);
+        string initOrigElement = sm->initMapTable[sx][sy]->get_mark();
+        if (initOrigElement[0] == 'P' || initOrigElement[0] == 'O' ||
+            initOrigElement[0] == 'B' || initOrigElement[1] == 'I')
+        {
+            recorder rec_leave;
+            rec_leave.now = sm;
+            rec_leave.x = sx;
+            rec_leave.y = sy;
+            rec_leave.before = sm->mapTable[sx][sy];
+            sm->mapTable[sx][sy] = sm->initMapTable[sx][sy]->get_prepared_empty();
+            rec_leave.after = sm->mapTable[sx][sy];
+            this_step.push_back(rec_leave);
+        }
+        else
+        { // . - =
+            recorder rec_leave;
+            rec_leave.now = sm;
+            rec_leave.x = sx;
+            rec_leave.y = sy;
+            rec_leave.before = sm->mapTable[sx][sy];
+            sm->mapTable[sx][sy] = sm->initMapTable[sx][sy];
+            rec_leave.after = sm->mapTable[sx][sy];
+            this_step.push_back(rec_leave);
+        }
     }
     else
-    { // . - =
-        recorder rec_leave;
-        rec_leave.now = sm;
-        rec_leave.x = sx;
-        rec_leave.y = sy;
-        rec_leave.before = sm->mapTable[sx][sy];
-        sm->mapTable[sx][sy] = sm->initMapTable[sx][sy];
-        rec_leave.after = sm->mapTable[sx][sy];
-        this_step.push_back(rec_leave);
-    }
+        push_player = false;//重置该状态，以便下一次使用
     // 进入的点的处理
     string initDestElement = dm->initMapTable[dx][dy]->get_mark();
     if ((initDestElement == "=" && mark[0] == 'P') ||
@@ -183,6 +189,10 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
     {
         object = object->get_upper();
     }
+    if (initDestElement == "=" && mark[0] == 'P')
+        p = (Player *)p->get_lower();
+    else if (initDestElement != "=" && mark[0] == 'p')
+        p = (Player *)p->get_upper();
     recorder rec_reach;
     rec_reach.now = dm;
     rec_reach.x = dx;

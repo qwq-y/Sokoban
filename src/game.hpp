@@ -19,6 +19,7 @@ private:
     vector<Ibox *> inf_boxs;
     vector<vector<recorder>> record;
     Player *p;
+    bool push_player = false;//记录是否推到了自己
 
 public:
     Game(Player *p, map<Map *, string> map2name, map<string, Map *> name2map, vector<Bbox *> B_boxs, vector<Ibox *> inf_boxs) : p(p), map2name(map2name), name2map(name2map), B_boxs(B_boxs), inf_boxs(inf_boxs)

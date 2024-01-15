@@ -53,6 +53,7 @@ int main()
             game->handlePlayerMove(userInput);
             if (game->checkWinCondition())
             {
+                game->printState();
                 cout << "\nYou won!\n";
                 break;
             }
