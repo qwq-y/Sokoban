@@ -17,6 +17,8 @@ protected:
     int col;
     Map *now;
     Empty *prepared_empty = nullptr;
+    Entity *lower = this;
+    Entity *upper = this;
 
 public:
     explicit Entity(string mark, int row, int col, Map *now) : mark(move(mark)), row(row), col(col), now(now){};
@@ -60,7 +62,7 @@ public:
     /**
      * @brief Change this Entity's position;
      */
-    void change_pos(pair<int, int> new_pos,Map* new_map)
+    void change_pos(pair<int, int> new_pos, Map *new_map)
     {
         row = new_pos.first;
         col = new_pos.second;
@@ -82,21 +84,22 @@ public:
         return prepared_empty;
     }
 
-    void to_upper()
+    void set_lower(Entity *low)
     {
-        if(isdigit(mark[0]))
-            mark[1] = toupper(mark[1]);
-        else
-            mark[0] = toupper(mark[0]); 
+        lower = low;
     }
-
-    void to_lower()
+    void set_upper(Entity *up)
     {
-        if(isdigit(mark[0]))
-            mark[1] = tolower(mark[1]);
-        else
-            mark[0] = tolower(mark[0]); 
-    } 
+        upper = up;
+    }
+    Entity *get_lower()
+    {
+        return lower;
+    }
+    Entity *get_upper()
+    {
+        return upper;
+    }
 };
 
 /**
@@ -105,7 +108,7 @@ public:
 class Player : public Entity
 {
 public:
-    Player(int row, int col, Map *now) : Entity("P", row, col, now) {}
+    Player(string mark, int row, int col, Map *now) : Entity(move(mark), row, col, now) {}
 };
 
 /**
@@ -150,7 +153,7 @@ public:
 class Obox : public Entity
 {
 public:
-    Obox(int row, int col, Map *now) : Entity("O", row, col, now) {}
+    Obox(string mark, int row, int col, Map *now) : Entity(move(mark), row, col, now) {}
 };
 
 /**

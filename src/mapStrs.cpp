@@ -2,8 +2,8 @@
 #include <map>
 #include <vector>
 using namespace std;
-map<string,string> map2box_name;
-vector<string*> level[9];
+map<string, string> map2box_name;
+vector<string *> level[9];
 
 string L1MStr = "# # # # # # # #\n"
                 "# . . . . = . #\n"
@@ -56,10 +56,10 @@ string L4B3Str = "# # . # #\n"
                  "# # # # #\n";
 
 string L4VoidStr = ". . . . .\n"
-                      ". . . . .\n"
-                      ". . = . .\n"
-                      ". . . . .\n"
-                      ". . . . .\n";
+                   ". . . . .\n"
+                   ". . = . .\n"
+                   ". . . . .\n"
+                   ". . . . .\n";
 
 string L5B1Str = "# # # # # # # # #\n"
                  "# B1 O B2 B3 O O P O\n"

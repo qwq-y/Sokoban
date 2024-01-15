@@ -6,6 +6,7 @@
 #define PROJ_GAME_H
 
 #include "map.hpp"
+#include "recorder.hpp"
 using namespace std;
 class Game
 {
@@ -16,6 +17,7 @@ private:
     map<string, Map *> name2map;
     vector<Bbox *> B_boxs;
     vector<Ibox *> inf_boxs;
+    vector<vector<recorder>> record;
     Player *p;
 
 public:
@@ -30,7 +32,9 @@ public:
 
     void printState();
 
-    bool Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy,int dir);
+    bool Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir,vector<recorder> &this_step);
+
+    void undo();
 };
 
 #endif // PROJ_GAME_H

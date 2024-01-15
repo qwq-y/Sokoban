@@ -35,18 +35,26 @@ void Map::initializeMapTable(Player *&p, vector<Bbox *> &B_boxs, vector<Ibox *> 
             {
                 if (element[0] == 'P')
                 {
-                    Player *player = new Player(row, col, this);
+                    Player *player_up = new Player("P", row, col, this);
+                    Player *player_low = new Player("p", row, col, this);
+                    player_up->set_lower(player_low);
+                    player_low->set_upper(player_up);
                     Empty *empty = new Empty(row, col, this);
-                    player->set_prepared_empty(empty);
-                    lineVec.push_back(player);
-                    p = player;
+                    player_up->set_prepared_empty(empty);
+                    player_low->set_prepared_empty(empty);
+                    lineVec.push_back(player_up);
+                    p = player_up;
                 }
                 else if (element[0] == 'O')
                 {
-                    Obox *obox = new Obox(row, col, this);
+                    Obox *obox_up = new Obox("O", row, col, this);
+                    Obox *obox_low = new Obox("o", row, col, this);
+                    obox_up->set_lower(obox_low);
+                    obox_low->set_upper(obox_up);
                     Empty *empty = new Empty(row, col, this);
-                    obox->set_prepared_empty(empty);
-                    lineVec.push_back(obox);
+                    obox_up->set_prepared_empty(empty);
+                    obox_low->set_prepared_empty(empty);
+                    lineVec.push_back(obox_up);
                 }
                 else if (element[0] == '#')
                 {
@@ -70,19 +78,27 @@ void Map::initializeMapTable(Player *&p, vector<Bbox *> &B_boxs, vector<Ibox *> 
                 }
                 else if (element[0] == 'B')
                 {
-                    Bbox *bbox = new Bbox(element, row, col, this);
-                    B_boxs.push_back(bbox);
+                    Bbox *bbox_up = new Bbox(element, row, col, this);
+                    element[0] = tolower(element[0]);
+                    Bbox *bbox_low = new Bbox(element, row, col, this);
+                    bbox_up->set_lower(bbox_low);
+                    bbox_low->set_upper(bbox_up);
+                    B_boxs.push_back(bbox_up);
                     Empty *empty = new Empty(row, col, this);
-                    bbox->set_prepared_empty(empty);
-                    lineVec.push_back(bbox);
+                    bbox_up->set_prepared_empty(empty);
+                    bbox_low->set_prepared_empty(empty);
+                    lineVec.push_back(bbox_up);
                 }
                 else if (isdigit(element[0]))
                 {
-                    Ibox *ibox = new Ibox(element, row, col, this, "B" + element[2], (int)(element[0] - '0'));
-                    inf_boxs.push_back(ibox);
+                    Ibox *ibox_up = new Ibox(element, row, col, this, "B" + element[2], (int)(element[0] - '0'));
+                    element[1] = tolower(element[1]);
+                    Ibox *ibox_low = new Ibox(element, row, col, this, "B" + element[2], (int)(element[0] - '0'));
+                    inf_boxs.push_back(ibox_up);
                     Empty *empty = new Empty(row, col, this);
-                    ibox->set_prepared_empty(empty);
-                    lineVec.push_back(ibox);
+                    ibox_up->set_prepared_empty(empty);
+                    ibox_low->set_prepared_empty(empty);
+                    lineVec.push_back(ibox_up);
                 }
                 element = "";
                 col++;
