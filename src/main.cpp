@@ -3,90 +3,120 @@
 #include <map>
 #include "map.hpp"
 #include "game.hpp"
-#include "mapFile.hpp"
 
 using namespace std;
 
-extern map<string, string> map2box_name;
-extern vector<string *> level[9];
 extern void build_map2box_name();
-
-void play() {
-    build_map2box_name();
-    int lev = 0;
-    cout << "Please choose the level(1~8):";
-    cin >> lev;
-    map<Map *, string> map2name;
-    map<string, Map *> name2map;
-    vector<Bbox *> B_boxs;
-    vector<Ibox *> inf_boxs;
-    Player *p;
-    for (string *mapStr : level[lev])
-    {
-        Map *map = new Map(p, *mapStr, B_boxs, inf_boxs);
-        map2name[map] = map2box_name[*mapStr];
-        name2map[map2box_name[*mapStr]] = map;
-    }
-    Game *game = new Game(p, map2name, name2map, B_boxs, inf_boxs);
-    char userInput;
-    cin.ignore();
-    while (true)
-    {
-        game->printState();
-        cout << "Enter your move (w/a/s/d/z) or quit (q):";
-        userInput = cin.get();
-        cin.ignore(); // 忽略换行符
-        userInput = tolower(userInput);
-        // 处理无效输入
-        if (!(userInput == 'w' || userInput == 'a' || userInput == 's' || userInput == 'd' || userInput == 'q' || userInput == 'z'))
-        {
-            std::cout << "Invalid input. Please enter 'w', 'a', 's', 'd', 'z', or 'q'." << std::endl;
-            continue; // 继续循环，等待有效输入
-        }
-        if (userInput == 'q')
-        { // 使用 q 退出
-            cout << "\nQuit.\n";
-            break;
-        }
-        else
-        {
-            game->handlePlayerMove(userInput);
-            if (game->checkWinCondition())
-            {
-                game->printState();
-                cout << "\nYou won!\n";
-                break;
-            }
-        }
-    }
-
-};
-
-void testMapFile() {
-    string L1MStr = "# # # # # # # #\n"
-                    "# . . . . = . #\n"
-                    "# . . . . - - #\n"
-                    "# . . # . # # #\n"
-                    "# . O . O . . #\n"
-                    "# . . . P . . #\n"
-                    "# # # # # # # #\n";
-    string saveData = L1MStr;
-    MapFile::saveMapToFile(saveData, "example.map");
-
-    string readData = MapFile::readMapFromFile("example.map");
-    if (!readData.empty()) {
-        std::cout << "Load: \n" << readData;
-    }
-}
+extern Game *initial_game();
+extern vector<string> get_archive();
+extern void archiving(const Game *game);
+extern Game *read_archive(vector<string> archives, int num);
+int lev;
 
 int main()
 {
-//    play();
+    build_map2box_name();
+    while (true)
+    {
+        cout << "Please choose 'New game' or 'Read archive'(n/r): ";
+        string s;
+        cin >> s;
+        while (s != "n" && s != "r")
+        {
+            cout << "Please input valid operate(n/r):";
+            cin >> s;
+        }
+        system("cls");
+        Game *game;
+        if (s == "n")
+        {
+            cout << "Please choose the level(1~9):";
+            cin >> lev;
+            while (lev < 1 || lev > 9)
+            {
+                cout << "Level is invalid, please input a correct level:";
+                cin >> lev;
+            }
+            game = initial_game();
+        }
+        else
+        {
 
-    testMapFile();
+            vector<string> archives = get_archive();
+            for (int i = 0; i < archives.size(); i++)
+                cout << i + 1 << ": " << archives[i] << endl;
+            cout << "Please choose one archive(input the numer of archive):";
+            do
+            {
+                int num;
+                cin >> num;
+                while (num > archives.size() || num <= 0)
+                {
+                    cout << endl;
+                    cout << "Please input a correct number:";
+                    cin >> num;
+                }
+                cout << endl;
+                game = read_archive(archives, num);
+                if (game == nullptr)
+                    cout << "Please choose another archive(input the numer of archive):";
+            } while (game == nullptr);
+        }
+        system("cls");
+        char userInput;
+        cin.ignore();
+        while (true)
+        {
+            game->printState();
+            cout << "Enter your move (w/a/s/d/z/f) or quit (q):";
+            userInput = cin.get();
+            cin.ignore(); // 忽略换行符
+            userInput = tolower(userInput);
+
+            if (userInput == 'f')
+            {
+                archiving(game);
+                system("cls");
+                continue;
+            }
+            // 处理无效输入
+            if (!(userInput == 'w' || userInput == 'a' || userInput == 's' || userInput == 'd' || userInput == 'q' || userInput == 'z'))
+            {
+                std::cout << "Invalid input. Please enter 'w', 'a', 's', 'd', 'z', or 'q'." << std::endl;
+                continue; // 继续循环，等待有效输入
+            }
+            if (userInput == 'q')
+            { // 使用 q 退出
+                cout << "\nQuit.\n";
+                break;
+            }
+            else
+            {
+                system("cls");
+                game->handlePlayerMove(userInput);
+                if (game->checkWinCondition())
+                {
+                    system("cls");
+                    game->printState();
+                    cout << "\nYou won!\n";
+                    system("pause");
+                    break;
+                }
+            }
+        }
+        system("cls");
+        cout << "Do you want to continue playing? [Y/n] ";
+        char check;
+        cin >> check;
+        while (check != 'Y' && check != 'n')
+        {
+            cout << "Please input a valid operation [Y/n]: ";
+            cin >> check;
+        }
+        if (check == 'n')
+            break;
+        system("cls");
+    }
 
     return 0;
 }
-
-
-

@@ -12,7 +12,7 @@ struct recorder
     Map* now;
     int x, y;
     Entity *before;
-    Entity *after;
+    bool lower = false;//false大写，true小写
 };
 
 #endif

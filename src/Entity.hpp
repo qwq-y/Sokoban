@@ -4,6 +4,8 @@
 #ifndef PROJ_Entity_H
 #define PROJ_Entity_H
 
+#include <string>
+
 using namespace std;
 
 class Map;
@@ -17,8 +19,6 @@ protected:
     int col;
     Map *now;
     Empty *prepared_empty = nullptr;
-    Entity *lower = this;
-    Entity *upper = this;
 
 public:
     explicit Entity(string mark, int row, int col, Map *now) : mark(move(mark)), row(row), col(col), now(now){};
@@ -69,11 +69,6 @@ public:
         now = new_map;
     }
 
-    void reset_mark(string s)
-    {
-        mark = s;
-    }
-
     void set_prepared_empty(Empty *tmp)
     {
         prepared_empty = tmp;
@@ -84,21 +79,17 @@ public:
         return prepared_empty;
     }
 
-    void set_lower(Entity *low)
+    void set_lower()
     {
-        lower = low;
+        if(isdigit(mark[0]))
+            mark[1] = tolower(mark[1]);
+        mark[0] = tolower(mark[0]);
     }
-    void set_upper(Entity *up)
+    void set_upper()
     {
-        upper = up;
-    }
-    Entity *get_lower()
-    {
-        return lower;
-    }
-    Entity *get_upper()
-    {
-        return upper;
+        if(isdigit(mark[1]))
+            mark[1] = toupper(mark[1]);
+        mark[0] = toupper(mark[0]);
     }
 };
 
@@ -185,6 +176,15 @@ public:
     {
         return make_pair(belong, layer);
     }
+};
+
+/**
+ * @brief The Clone box Entity
+ */
+class Clone : public Entity
+{
+public:
+    Clone(string mark, int row, int col, Map *now) : Entity(move(mark), row, col, now){}
 };
 
 #endif
