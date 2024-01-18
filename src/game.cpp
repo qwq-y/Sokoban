@@ -151,126 +151,128 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
     if (!push_itself && (dm->mapTable[dx][dy]->get_mark()[0] == 'O' || dm->mapTable[dx][dy]->get_mark()[0] == 'o' || dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b' || dm->mapTable[dx][dy]->get_mark()[1] == 'I' || dm->mapTable[dx][dy]->get_mark()[1] == 'i')) // 前方还有箱子
     {
         entities.push_back(dm->mapTable[dx][dy]);
-        // for (Entity *entity : entities)
-        //     cout << entity->get_mark() << " ";
-        // cout << endl;
         can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step, 0, false, 0, entities);
     }
     if (!can_move) // 前面的块不能再往前
     {
-        bool can_move_in_next = false; // 记录该块是否可以进入前面的块
-
-        // 先看能否进后面的块，不行再考虑自己能不能吞掉后面的块
-        if (dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b') // 是可进入箱子
+        if (map2name[sm] != "VOID") // 虚空无法进入任何块内
         {
-            string name = dm->mapTable[dx][dy]->get_mark();
-            if (name[1] == 'C') // 进入克隆盒
-                name = "B" + name.substr(2, 1);
-            Map *entering_map = name2map[name];
-            int entering_rows = entering_map->rows;
-            int entering_cols = entering_map->cols;
+            bool can_move_in_next = false; // 记录该块是否可以进入前面的块
 
-            if (dir == 1) // 向上进入，检测B箱的下边
+            // 先看能否进后面的块，不行再考虑自己能不能吞掉后面的块
+            if (dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b') // 是可进入箱子
             {
-                int x = entering_rows - 1;
-                int y = (entering_cols - 1) / 2;
-                if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
-                    if (sm->cols >= entering_cols)
-                        y = sy * (entering_cols) / (sm->cols - 1);
-                    else
-                        y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
-                if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
-                    can_move_in_next = false;
-                else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
-            }
-            else if (dir == 2) // 向右进入，检测B箱的左边
-            {
-                int x = (entering_rows - 1) / 2;
-                int y = 0;
-                if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
-                    if (sm->rows >= entering_rows)
-                        x = sx * (entering_rows) / (sm->rows - 1);
-                    else
-                        x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
-                if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
-                    can_move_in_next = false;
-                else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
-            }
-            else if (dir == 3) // 向下进入，检测B箱的上边
-            {
-                int x = 0;
-                int y = (entering_cols - 1) / 2;
-                if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
-                    if (sm->cols >= entering_cols)
-                        y = sy * (entering_cols) / (sm->cols - 1);
-                    else
-                        y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
-                if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
-                    can_move_in_next = false;
-                else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
-            }
-            else if (dir == 4) // 向左进入，检测B箱的右边
-            {
-                int x = (entering_rows - 1) / 2;
-                int y = entering_cols - 1;
-                if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
-                    if (sm->rows >= entering_rows)
-                        x = sx * (entering_rows) / (sm->rows - 1);
-                    else
-                        x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
-                if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
-                    can_move_in_next = false;
-                else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
-            }
-        }
-        if (can_move_in_next) // 进入了前面的箱子
-            return true;
-        else // 考虑是否能吞掉后面的块
-        {
-            if (object->get_mark()[0] != 'B' && object->get_mark()[0] != 'b')
-                return false;
-            else
-            {
-                string name = sm->mapTable[sx][sy]->get_mark();
-                if (name[1] == 'C') // 自己是克隆盒
+                string name = dm->mapTable[dx][dy]->get_mark();
+                if (name[1] == 'C') // 进入克隆盒
                     name = "B" + name.substr(2, 1);
-                Map *own_map = name2map[name];
-                int own_rows = own_map->rows;
-                int own_cols = own_map->cols;
-                if (dir == 1) // 向上吃，检测自己的上边
+                Map *entering_map = name2map[name];
+                int entering_rows = entering_map->rows;
+                int entering_cols = entering_map->cols;
+
+                if (dir == 1) // 向上进入，检测B箱的下边
                 {
-                    if (own_map->mapTable[0][(own_cols - 1) / 2]->get_mark()[0] == '#') // 是墙，进不去
-                        return false;
-                    else if (!Move(dm, dx, dy, own_map, 0, (own_cols - 1) / 2, 3, this_step, 1, false, 0, entities)) // 能吃就吃，再走；不能吃直接返回
-                        return false;
+                    int x = entering_rows - 1;
+                    int y = (entering_cols - 1) / 2;
+                    if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
+                        if (sm->cols >= entering_cols)
+                            y = sy * (entering_cols) / (sm->cols - 1);
+                        else
+                            y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
+                    if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
+                        can_move_in_next = false;
+                    else
+                        can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
                 }
-                else if (dir == 2) // 向右吃，检测自己的右边
+                else if (dir == 2) // 向右进入，检测B箱的左边
                 {
-                    if (own_map->mapTable[(own_rows - 1) / 2][own_cols - 1]->get_mark()[0] == '#') // 是墙，进不去
-                        return false;
-                    else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, own_cols - 1, 4, this_step, 1, false, 0, entities)) // 先吃进去，再走；不能吃直接返回
-                        return false;
+                    int x = (entering_rows - 1) / 2;
+                    int y = 0;
+                    if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
+                        if (sm->rows >= entering_rows)
+                            x = sx * (entering_rows) / (sm->rows - 1);
+                        else
+                            x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
+                    if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
+                        can_move_in_next = false;
+                    else
+                        can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
                 }
-                else if (dir == 3) // 向下吃，检测自己的下边
+                else if (dir == 3) // 向下进入，检测B箱的上边
                 {
-                    if (own_map->mapTable[own_rows - 1][(own_cols - 1) / 2]->get_mark()[0] == '#') // 是墙，进不去
-                        return false;
-                    else if (!Move(dm, dx, dy, own_map, own_rows - 1, (own_cols - 1) / 2, 1, this_step, 1, false, 0, entities)) // 先吃进去，再走；不能吃直接返回
-                        return false;
+                    int x = 0;
+                    int y = (entering_cols - 1) / 2;
+                    if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
+                        if (sm->cols >= entering_cols)
+                            y = sy * (entering_cols) / (sm->cols - 1);
+                        else
+                            y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
+                    if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
+                        can_move_in_next = false;
+                    else
+                        can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
                 }
-                else if (dir == 4) // 向左吃，检测自己的左边
+                else if (dir == 4) // 向左进入，检测B箱的右边
                 {
-                    if (own_map->mapTable[(own_rows - 1) / 2][0]->get_mark()[0] == '#') // 是墙，进不去
-                        return false;
-                    else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, 0, 2, this_step, 1, false, 0, entities)) // 先吃进去，再走；不能吃直接返回
-                        return false;
+                    int x = (entering_rows - 1) / 2;
+                    int y = entering_cols - 1;
+                    if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
+                        if (sm->rows >= entering_rows)
+                            x = sx * (entering_rows) / (sm->rows - 1);
+                        else
+                            x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
+                    if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
+                        can_move_in_next = false;
+                    else
+                        can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
+                }
+            }
+            if (can_move_in_next) // 进入了前面的箱子
+                return true;
+            else // 考虑是否能吞掉后面的块
+            {
+                if (object->get_mark()[0] != 'B' && object->get_mark()[0] != 'b')
+                    return false;
+                else
+                {
+                    string name = sm->mapTable[sx][sy]->get_mark();
+                    if (name[1] == 'C') // 自己是克隆盒
+                        name = "B" + name.substr(2, 1);
+                    Map *own_map = name2map[name];
+                    int own_rows = own_map->rows;
+                    int own_cols = own_map->cols;
+                    if (dir == 1) // 向上吃，检测自己的上边
+                    {
+                        if (own_map->mapTable[0][(own_cols - 1) / 2]->get_mark()[0] == '#') // 是墙，进不去
+                            return false;
+                        else if (!Move(dm, dx, dy, own_map, 0, (own_cols - 1) / 2, 3, this_step, 1, false, 0, entities)) // 能吃就吃，再走；不能吃直接返回
+                            return false;
+                    }
+                    else if (dir == 2) // 向右吃，检测自己的右边
+                    {
+                        if (own_map->mapTable[(own_rows - 1) / 2][own_cols - 1]->get_mark()[0] == '#') // 是墙，进不去
+                            return false;
+                        else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, own_cols - 1, 4, this_step, 1, false, 0, entities)) // 先吃进去，再走；不能吃直接返回
+                            return false;
+                    }
+                    else if (dir == 3) // 向下吃，检测自己的下边
+                    {
+                        if (own_map->mapTable[own_rows - 1][(own_cols - 1) / 2]->get_mark()[0] == '#') // 是墙，进不去
+                            return false;
+                        else if (!Move(dm, dx, dy, own_map, own_rows - 1, (own_cols - 1) / 2, 1, this_step, 1, false, 0, entities)) // 先吃进去，再走；不能吃直接返回
+                            return false;
+                    }
+                    else if (dir == 4) // 向左吃，检测自己的左边
+                    {
+                        if (own_map->mapTable[(own_rows - 1) / 2][0]->get_mark()[0] == '#') // 是墙，进不去
+                            return false;
+                        else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, 0, 2, this_step, 1, false, 0, entities)) // 先吃进去，再走；不能吃直接返回
+                            return false;
+                    }
                 }
             }
         }
+        else
+            return false;
     }
 
     // 单体移动
