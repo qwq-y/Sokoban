@@ -17,7 +17,7 @@ protected:
     string mark;
     int row;
     int col;
-    Map *now;
+    Map *now = nullptr;
     Empty *prepared_empty = nullptr;
 
 public:

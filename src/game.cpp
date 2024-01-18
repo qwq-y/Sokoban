@@ -65,12 +65,12 @@ void Game::handlePlayerMove(char userInput)
     int newRow = p->get_pos().first + rowMove;
     int newCol = p->get_pos().second + colMove;
     vector<recorder> this_step;
-    Move(currentMap, p->get_pos().first, p->get_pos().second, currentMap, newRow, newCol, direction, this_step, 0);
+    Move(currentMap, p->get_pos().first, p->get_pos().second, currentMap, newRow, newCol, direction, this_step, 0, false, 0);
     if (!this_step.empty())
         record.push_back(this_step);
 }
 
-bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status) // dir: 1上 2右 3下 4 左,status:-1出，0同地图，1入
+bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer) // dir: 1上 2右 3下 4 左,status:-1出，0同地图，1入
 {
     // cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
     Entity *object = sm->mapTable[sx][sy];
@@ -92,20 +92,53 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         Map *outer_map;
         int outer_x = 0;
         int outer_y = 0;
+        bool find = false;
         for (Bbox *bbox : B_boxs)
             if (bbox->get_mark()[1] == mark[1])
             {
+                find = true;
                 outer_map = bbox->get_map();
                 outer_x = bbox->get_pos().first + xMove;
                 outer_y = bbox->get_pos().second + yMove;
                 break;
             }
-        return Move(sm, sx, sy, outer_map, outer_x, outer_y, dir, this_step, -1);
+        if (find) // 核查是否无限
+        {
+            if ((outer_x < 0 || outer_y < 0 || outer_x >= outer_map->rows || outer_y >= outer_map->cols) && outer_map == dm) // 再次出界且地图没变,加一重无限
+            {
+                find = false;
+                for (Ibox *ibox : inf_boxs)
+                    if (ibox->get_belong_info().first == mark && ibox->get_belong_info().second == inf_layer + 1)
+                    {
+                        find = true;
+                        outer_map = ibox->get_map();
+                        outer_x = ibox->get_pos().first + xMove;
+                        outer_y = ibox->get_pos().second + yMove;
+                        break;
+                    }
+                if (!find)
+                    mark = to_string(inf_layer + 1) + "I" + mark[1];
+                else
+                    return Move(sm, sx, sy, outer_map, outer_x, outer_y, dir, this_step, -1, false, inf_layer + 1);
+            }
+        }
+        if (!find) // 出到虚空了，创建虚空
+        {
+            string voidStr = make_void_str(mark);
+            Map *void_map = new Map(p, voidStr, B_boxs, inf_boxs);
+            map2name[void_map] = "VOID";
+            name2map["VOID"] = void_map;
+            outer_map = void_map;
+            outer_x = 4 + xMove;
+            outer_y = 4 + yMove;
+            return Move(sm, sx, sy, outer_map, outer_x, outer_y, dir, this_step, -1, true, inf_layer + 1);
+        }
+        return Move(sm, sx, sy, outer_map, outer_x, outer_y, dir, this_step, -1, false, 0);
     }
     else if (dm->mapTable[dx][dy]->get_mark()[0] == '#') // 撞墙
         return false;
     else if (dm->mapTable[dx][dy]->get_mark()[0] == 'O' || dm->mapTable[dx][dy]->get_mark()[0] == 'o' || dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b' || dm->mapTable[dx][dy]->get_mark()[1] == 'I' || dm->mapTable[dx][dy]->get_mark()[1] == 'i') // 前方还有箱子
-        can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step, 0);
+        can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step, 0, false, 0);
     else if (dm->mapTable[dx][dy] == p) // 推到自己了
         push_player = true;
 
@@ -135,7 +168,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                 if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                     can_move_in_next = false;
                 else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1);
+                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0);
             }
             else if (dir == 2) // 向右进入，检测B箱的左边
             {
@@ -149,7 +182,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                 if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                     can_move_in_next = false;
                 else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1);
+                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0);
             }
             else if (dir == 3) // 向下进入，检测B箱的上边
             {
@@ -163,7 +196,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                 if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                     can_move_in_next = false;
                 else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1);
+                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0);
             }
             else if (dir == 4) // 向左进入，检测B箱的右边
             {
@@ -177,7 +210,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                 if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                     can_move_in_next = false;
                 else
-                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1);
+                    can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0);
             }
         }
         if (can_move_in_next) // 进入了前面的箱子
@@ -198,28 +231,28 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                 {
                     if (own_map->mapTable[0][(own_cols - 1) / 2]->get_mark()[0] == '#') // 是墙，进不去
                         return false;
-                    else if (!Move(dm, dx, dy, own_map, 0, (own_cols - 1) / 2, 3, this_step, 1)) // 能吃就吃，再走；不能吃直接返回
+                    else if (!Move(dm, dx, dy, own_map, 0, (own_cols - 1) / 2, 3, this_step, 1, false, 0)) // 能吃就吃，再走；不能吃直接返回
                         return false;
                 }
                 else if (dir == 2) // 向右吃，检测自己的右边
                 {
                     if (own_map->mapTable[(own_rows - 1) / 2][own_cols - 1]->get_mark()[0] == '#') // 是墙，进不去
                         return false;
-                    else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, own_cols - 1, 4, this_step, 1)) // 先吃进去，再走；不能吃直接返回
+                    else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, own_cols - 1, 4, this_step, 1, false, 0)) // 先吃进去，再走；不能吃直接返回
                         return false;
                 }
                 else if (dir == 3) // 向下吃，检测自己的下边
                 {
                     if (own_map->mapTable[own_rows - 1][(own_cols - 1) / 2]->get_mark()[0] == '#') // 是墙，进不去
                         return false;
-                    else if (!Move(dm, dx, dy, own_map, own_rows - 1, (own_cols - 1) / 2, 1, this_step, 1)) // 先吃进去，再走；不能吃直接返回
+                    else if (!Move(dm, dx, dy, own_map, own_rows - 1, (own_cols - 1) / 2, 1, this_step, 1, false, 0)) // 先吃进去，再走；不能吃直接返回
                         return false;
                 }
                 else if (dir == 4) // 向左吃，检测自己的左边
                 {
                     if (own_map->mapTable[(own_rows - 1) / 2][0]->get_mark()[0] == '#') // 是墙，进不去
                         return false;
-                    else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, 0, 2, this_step, 1)) // 先吃进去，再走；不能吃直接返回
+                    else if (!Move(dm, dx, dy, own_map, (own_rows - 1) / 2, 0, 2, this_step, 1, false, 0)) // 先吃进去，再走；不能吃直接返回
                         return false;
                 }
             }
@@ -227,7 +260,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
     }
 
     // 单体移动
-    if(object == p)
+    if (object == p)
         step_rec.push_back(dir);
     // 离开的点的处理
     if (object != p || push_player == false) // 判定是否推到过自己，如果推到过，那么player移动时就不更新离开的点了
@@ -246,6 +279,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
             if (mark[0] == 'o' || mark[0] == 'b' || mark[0] == 'p' || mark[1] == 'i')
                 rec_leave.lower = true;
             sm->mapTable[sx][sy] = sm->initMapTable[sx][sy]->get_prepared_empty();
+            rec_leave.openVoid = open_void;
             this_step.push_back(rec_leave);
         }
         else
@@ -255,6 +289,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
             rec_leave.x = sx;
             rec_leave.y = sy;
             rec_leave.before = sm->mapTable[sx][sy];
+            rec_leave.openVoid = open_void;
             if (mark[0] == 'o' || mark[0] == 'b' || mark[0] == 'p' || mark[1] == 'i')
                 rec_leave.lower = true;
             sm->mapTable[sx][sy] = sm->initMapTable[sx][sy];
@@ -311,7 +346,50 @@ void Game::undo()
             move.before->set_upper();
         if (move.before == p)
             currentMap = move.now;
+
+        if (move.openVoid) // 这一步创建的虚空，所以需要销毁
+        {
+            Map *void_map = name2map["VOID"];
+            string mark = void_map->initMapTable[4][4]->get_mark();
+            cout << mark << endl;
+            if (mark[0] == 'B' || mark[0] == 'b')
+                B_boxs.erase(
+                    remove_if(B_boxs.begin(), B_boxs.end(), [mark](const Bbox *bboxPtr)
+                              { return bboxPtr->get_mark() == mark; }),
+                    B_boxs.end());
+            else if (mark[1] == 'I' || mark[1] == 'i')
+                inf_boxs.erase(
+                    remove_if(inf_boxs.begin(), inf_boxs.end(), [mark](const Ibox *iboxPtr)
+                              { return iboxPtr->get_mark() == mark; }),
+                    inf_boxs.end());
+            map<string, Map *>::iterator it1 = name2map.find("VOID");
+            map<Map *, string>::iterator it2 = map2name.find(void_map);
+            if (it1 != name2map.end())
+                name2map.erase(it1);
+            if (it2 != map2name.end())
+                map2name.erase(it2);
+        }
     }
+}
+
+string Game::make_void_str(string mark)
+{
+    string void_map;
+    for (int i = 0; i < 9; i++)
+        for (int j = 0; j < 9; j++)
+        {
+            if (i == 4 && j == 4)
+                void_map += mark;
+            else if (i == 0 || j == 0 || i == 8 || j == 8)
+                void_map += "#";
+            else
+                void_map += ".";
+            if (j == 8)
+                void_map += "\n";
+            else
+                void_map += " ";
+        }
+    return void_map;
 }
 
 bool Game::checkWinCondition() const
@@ -323,7 +401,7 @@ bool Game::checkWinCondition() const
             {
                 Entity *initElement = submap.first->getInitPosElement(i, j);
                 Entity *currentElement = submap.first->getPosElement(i, j);
-                if (initElement->get_mark()[0] == '-' && (currentElement->get_mark()[0] != 'i' && currentElement->get_mark()[0] != 'b' && currentElement->get_mark()[0] != 'o'))
+                if (initElement->get_mark()[0] == '-' && (currentElement->get_mark()[1] != 'i' && currentElement->get_mark()[0] != 'b' && currentElement->get_mark()[0] != 'o'))
                 {
                     return false;
                 }

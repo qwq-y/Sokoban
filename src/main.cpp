@@ -26,7 +26,7 @@ int main()
             cout << "Please input valid operate(n/r):";
             cin >> s;
         }
-        system("cls");
+        system("clear");
         Game *game;
         if (s == "n")
         {
@@ -62,7 +62,7 @@ int main()
                     cout << "Please choose another archive(input the numer of archive):";
             } while (game == nullptr);
         }
-        system("cls");
+        system("clear");
         char userInput;
         cin.ignore();
         while (true)
@@ -76,7 +76,7 @@ int main()
             if (userInput == 'f')
             {
                 archiving(game);
-                system("cls");
+                system("clear");
                 continue;
             }
             // 处理无效输入
@@ -92,11 +92,11 @@ int main()
             }
             else
             {
-                system("cls");
+                system("clear");
                 game->handlePlayerMove(userInput);
                 if (game->checkWinCondition())
                 {
-                    system("cls");
+                    system("clear");
                     game->printState();
                     cout << "\nYou won!\n";
                     system("pause");
@@ -104,7 +104,7 @@ int main()
                 }
             }
         }
-        system("cls");
+        system("clear");
         cout << "Do you want to continue playing? [Y/n] ";
         char check;
         cin >> check;
@@ -115,7 +115,7 @@ int main()
         }
         if (check == 'n')
             break;
-        system("cls");
+        system("clear");
     }
 
     return 0;

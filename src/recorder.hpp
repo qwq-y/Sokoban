@@ -9,10 +9,11 @@
 
 struct recorder
 {
-    Map* now;
+    Map *now;
     int x, y;
     Entity *before;
-    bool lower = false;//false大写，true小写
+    bool lower = false; // false大写，true小写
+    bool openVoid = false;
 };
 
 #endif
