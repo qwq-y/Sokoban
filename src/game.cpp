@@ -24,8 +24,6 @@ void Game::printState()
         print.first->printMap();
         cout << endl;
     }
-    /*cout << "rows: " << currentMap->rows
-         << "\tcols: " << currentMap->cols << endl;*/
     cout << "player position: " << map2name[currentMap] << " (" << p->get_pos().first << ", " << p->get_pos().second << ")\n";
     cout << endl;
 }
@@ -57,8 +55,11 @@ void Game::handlePlayerMove(char userInput)
     case 'z':
         undo();
         return;
+    case 'r':
+        reset();
+        return;
     default:
-        cout << "Invalid input. Please use 'w', 's', 'a', 'd' or 'z'" << endl;
+        cout << "Invalid input. Please use 'w', 's', 'a', 'd', 'z' or 'r'" << endl;
         return;
     }
 
@@ -135,6 +136,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
             outer_map = void_map;
             outer_x = 4 + xMove;
             outer_y = 4 + yMove;
+            have_void = true;
             return Move(sm, sx, sy, outer_map, outer_x, outer_y, dir, this_step, -1, true, inf_layer + 1, entities);
         }
         return Move(sm, sx, sy, outer_map, outer_x, outer_y, dir, this_step, -1, false, 0, entities);
@@ -371,7 +373,6 @@ void Game::undo()
         {
             Map *void_map = name2map["VOID"];
             string mark = void_map->initMapTable[4][4]->get_mark();
-            cout << mark << endl;
             if (mark[0] == 'B' || mark[0] == 'b')
                 B_boxs.erase(
                     remove_if(B_boxs.begin(), B_boxs.end(), [mark](const Bbox *bboxPtr)
@@ -388,8 +389,76 @@ void Game::undo()
                 name2map.erase(it1);
             if (it2 != map2name.end())
                 map2name.erase(it2);
+            have_void = false;
+        }
+        if (move.clearVoid) // 这一步是reset，消除过虚空，undo这一步需要复原虚空。之前的map并没有消失，而是存在了这一个recorder的now里，所以直接将地图加回两个map里，再把虚空中心的箱子加回B_boxs或者inf_boxs即可
+        {
+            Map *void_map = move.now;
+            have_void = true;
+            map2name[void_map] = "VOID";
+            name2map["VOID"] = void_map;
+            if (void_map->initMapTable[4][4]->get_mark()[0] == 'B' || void_map->initMapTable[4][4]->get_mark()[0] == 'b')
+                B_boxs.push_back((Bbox *)void_map->initMapTable[4][4]);
+            else if (void_map->initMapTable[4][4]->get_mark()[1] == 'I' || void_map->initMapTable[4][4]->get_mark()[1] == 'i')
+                inf_boxs.push_back((Ibox *)void_map->initMapTable[4][4]);
         }
     }
+}
+
+void Game::reset()
+{
+    vector<recorder> this_step;
+    for (const auto &print : map2name)
+    {
+        Map *now = print.first;
+        for (int i = 0; i < now->mapTable.size(); i++)
+        {
+            for (int j = 0; j < now->mapTable[i].size(); j++)
+            {
+                if (now->mapTable[i][j] != now->initMapTable[i][j])
+                {
+                    recorder rec;
+                    rec.now = now;
+                    rec.x = i;
+                    rec.y = j;
+                    rec.before = now->mapTable[i][j];
+                    if (rec.before->get_mark()[0] == 'o' || rec.before->get_mark()[0] == 'b' || rec.before->get_mark()[1] == 'i' || rec.before->get_mark()[0] == 'p')
+                        rec.lower = true;
+                    this_step.push_back(rec);
+                    if (now->mapTable[i][j]->get_mark()[0] == 'o' || now->mapTable[i][j]->get_mark()[0] == 'b' || now->mapTable[i][j]->get_mark()[0] == 'p' || now->mapTable[i][j]->get_mark()[1] == 'i')
+                        now->mapTable[i][j]->set_upper();
+                    now->mapTable[i][j] = now->initMapTable[i][j];
+                    now->mapTable[i][j]->change_pos(make_pair(i, j), now);
+                }
+            }
+        }
+        if (have_void && map2name[now] == "VOID")
+            this_step[this_step.size() - 1].clearVoid = true;
+    }
+    if (have_void)
+    {
+        have_void = false;
+        Map *void_map = name2map["VOID"];
+        string mark = void_map->initMapTable[4][4]->get_mark();
+        if (mark[0] == 'B' || mark[0] == 'b')
+            B_boxs.erase(
+                remove_if(B_boxs.begin(), B_boxs.end(), [mark](const Bbox *bboxPtr)
+                          { return bboxPtr->get_mark() == mark; }),
+                B_boxs.end());
+        else if (mark[1] == 'I' || mark[1] == 'i')
+            inf_boxs.erase(
+                remove_if(inf_boxs.begin(), inf_boxs.end(), [mark](const Ibox *iboxPtr)
+                          { return iboxPtr->get_mark() == mark; }),
+                inf_boxs.end());
+        map<string, Map *>::iterator it1 = name2map.find("VOID");
+        map<Map *, string>::iterator it2 = map2name.find(void_map);
+        if (it1 != name2map.end())
+            name2map.erase(it1);
+        if (it2 != map2name.end())
+            map2name.erase(it2);
+    }
+    record.push_back(this_step);
+    currentMap = p->get_map();
 }
 
 string Game::make_void_str(string mark)

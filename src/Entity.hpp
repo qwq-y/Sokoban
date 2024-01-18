@@ -87,7 +87,7 @@ public:
     }
     void set_upper()
     {
-        if(isdigit(mark[1]))
+        if(isdigit(mark[0]))
             mark[1] = toupper(mark[1]);
         mark[0] = toupper(mark[0]);
     }

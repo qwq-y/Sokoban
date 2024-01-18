@@ -14,6 +14,7 @@ struct recorder
     Entity *before;
     bool lower = false; // false大写，true小写
     bool openVoid = false;
+    bool clearVoid = false;
 };
 
 #endif

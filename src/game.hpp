@@ -22,7 +22,7 @@ private:
     Player *p;
     bool push_itself = false; // 记录是否推到了自己
     Entity *itself = nullptr; // 记录贪吃蛇头的实体
-    bool heav_void = false;   // 记录是否创建虚空
+    bool have_void = false;   // 记录是否创建虚空
 
 public:
     Game(Player *p, map<Map *, string> map2name, map<string, Map *> name2map, vector<Bbox *> B_boxs, vector<Ibox *> inf_boxs) : p(p), map2name(map2name), name2map(name2map), B_boxs(B_boxs), inf_boxs(inf_boxs)
@@ -39,6 +39,8 @@ public:
     bool Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer, vector<Entity *> &entities);
 
     void undo();
+    
+    void reset();
 
     string make_void_str(string mark);
 

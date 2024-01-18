@@ -68,7 +68,7 @@ int main()
         while (true)
         {
             game->printState();
-            cout << "Enter your move (w/a/s/d/z/f) or quit (q):";
+            cout << "Enter your move (w/a/s/d/z/r/f) or quit (q):";
             userInput = cin.get();
             cin.ignore(); // 忽略换行符
             userInput = tolower(userInput);
@@ -80,9 +80,9 @@ int main()
                 continue;
             }
             // 处理无效输入
-            if (!(userInput == 'w' || userInput == 'a' || userInput == 's' || userInput == 'd' || userInput == 'q' || userInput == 'z'))
+            if (!(userInput == 'w' || userInput == 'a' || userInput == 's' || userInput == 'd' || userInput == 'q' || userInput == 'z' || userInput == 'r'))
             {
-                std::cout << "Invalid input. Please enter 'w', 'a', 's', 'd', 'z', or 'q'." << std::endl;
+                std::cout << "Invalid input. Please enter 'w', 'a', 's', 'd', 'r', 'z', or 'q'." << std::endl;
                 continue; // 继续循环，等待有效输入
             }
             if (userInput == 'q')
