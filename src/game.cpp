@@ -76,7 +76,7 @@ void Game::handlePlayerMove(char userInput)
 
 bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer, vector<Entity *> &entities) // dir: 1上 2右 3下 4 左,status:-1出，0同地图，1入
 {
-    // cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
+    cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
     Entity *object = sm->mapTable[sx][sy];
     string mark = object->get_mark();
     int xMove = 0;
@@ -145,8 +145,6 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
     for (Entity *entity : entities)
         if (entity == dm->mapTable[dx][dy]) // 贪吃蛇出现
         {
-            for (Entity *now : entities)
-                cout << now->get_mark() << endl;
             itself = entity;
             push_itself = true;
             break;
@@ -156,11 +154,11 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         entities.push_back(sm->mapTable[sx][sy]);
         can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step, 0, false, 0, entities);
     }
-    if (!can_move) // 前面的块不能再往前
+    if (!can_move && !push_itself) // 前面的块不能再往前,且后面没有出现贪吃蛇
     {
         if (map2name[sm] != "VOID") // 虚空无法进入任何块内
         {
-            bool can_move_in_next = false; // 记录该块是否可以进入前面的块
+            bool can_move_in_next = false; // 记录该块是否可以进入后面的块
 
             // 先看能否进后面的块，不行再考虑自己能不能吞掉后面的块
             if (dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b') // 是可进入箱子
@@ -287,6 +285,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         else
             return false;
     }
+    else if(!can_move && push_itself)///不能动，但是后面贪吃蛇了，那么此块不动
+        return false;
 
     // 单体移动
     if (object == p)
@@ -348,12 +348,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
     if (object == p)
         currentMap = dm;
     this_step.push_back(rec_reach);
-    if (push_itself && itself == object) // 重置状态，以便下一次使用,且返回false，避免之前的块移动
-    {
-        push_itself = false;
-        itself = nullptr;
+    if (push_itself && itself == object) // 返回false，但不重置状态，保留push_itself供之前的块识别，避免因为返回false而被前面的块吃
         return false;
-    }
     return true;
 }
 
