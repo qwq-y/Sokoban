@@ -76,7 +76,7 @@ void Game::handlePlayerMove(char userInput)
 
 bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer, vector<Entity *> &entities) // dir: 1上 2右 3下 4 左,status:-1出，0同地图，1入
 {
-    cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
+    // cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
     Entity *object = sm->mapTable[sx][sy];
     string mark = object->get_mark();
     int xMove = 0;
