@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 map<string, string> map2box_name;
-vector<string *> level[10];
+vector<string *> level[20];
 
 string L1MStr = "# # # # # # # #\n"
                 "# . . . . = . #\n"
@@ -72,7 +72,7 @@ string L6B1Str = "# # # # # # # #\n"
                  "# . . . # . . #\n"
                  "# P B2 . # . . #\n"
                  "# . . . # . = #\n"
-                 "# # # # # # # #\n";
+                 "# # # # # # # #\n"; // Multiple reference(Clone)
 
 string L6B2Str = "# # # # # # #\n"
                  "# . . . . . #\n"
@@ -100,7 +100,7 @@ string L7B1Str = "# # # # # # # # # # #\n"
                  "# . . . . # # # # # #\n"
                  "# . P . . . . . . . #\n"
                  "# . . . . . . . . . #\n"
-                 "# . . . . . . . . . #\n";
+                 "# . . . . . . . . . #\n"; // multiple-infinite
 
 string L8B1Str = "# . . . . . . . #\n"
                  "# . . . . . . . #\n"
@@ -109,11 +109,11 @@ string L8B1Str = "# . . . . . . . #\n"
                  "# . . . . . . . #\n"
                  "# . . . . . . . #\n"
                  "# . . # 2I1 . . . #\n"
-                 "# # # # # # # # #\n";
+                 "# # # # # # # # #\n"; // multiple-infinite
 
 string L9B1Str = "# # # #\n"
                  "# B2 B3 #\n"
-                 "# # # #\n";
+                 "# # # #\n"; // slide into
 
 string L9B2Str = "# . P\n"
                  "# . .\n"
@@ -122,6 +122,39 @@ string L9B2Str = "# . P\n"
 string L9B3Str = "O - #\n"
                  ". . #\n"
                  ". . #\n";
+
+string L10B1Str = "# . . . . . . . . . . . #\n"
+                  "# . . . . . . . . . . . #\n"
+                  "# . B1 1I1 2I1 3I1 4I1 5I1 6I1 . . . #\n"
+                  "# . P . . . . . . . . . #\n"
+                  "# . . . . . . . . . . . #\n"
+                  "# . . . . . . . . . = - #\n"
+                  "# # # # # # # # # # # # #\n"; // multiple-infinite
+
+string L11MAINStr = "# # # # # # #\n"
+                    "# . . P . . #\n"
+                    "# . BC1 . BC1 . #\n"
+                    "# . . . . . #\n"
+                    "# . . . . - #\n"
+                    "# # # B1 # = #\n"
+                    "# # # # # # #\n";
+
+string L11B1Str = ". # . . .\n"
+                  ". # # . .\n"
+                  ". . . . .\n"
+                  ". . . . .\n"
+                  ". . . . .\n";
+string L11B2Str = "# # #\n"
+                  ". . #\n"
+                  "# . #\n";
+
+string L11EPSILONStr = ". . . . . B2 .\n"
+                       ". . . . . . .\n"
+                       ". . . . . . .\n"
+                       ". . . . . . .\n"
+                       ". . . # . . .\n"
+                       ". . . . . . .\n"
+                       ". . . . . . .\n";
 
 void build_map2box_name()
 {
@@ -143,6 +176,11 @@ void build_map2box_name()
     level[9].push_back(&L9B1Str);
     level[9].push_back(&L9B2Str);
     level[9].push_back(&L9B3Str);
+    level[10].push_back(&L10B1Str);
+    level[11].push_back(&L11MAINStr);
+    level[11].push_back(&L11B1Str);
+    level[11].push_back(&L11B2Str);
+    level[11].push_back(&L11EPSILONStr);
 
     map2box_name[L1MStr] = "MAIN";
     map2box_name[L2MStr] = "MAIN";
@@ -162,4 +200,9 @@ void build_map2box_name()
     map2box_name[L9B1Str] = "B1";
     map2box_name[L9B2Str] = "B2";
     map2box_name[L9B3Str] = "B3";
+    map2box_name[L10B1Str] = "B1";
+    map2box_name[L11MAINStr] = "MAIN";
+    map2box_name[L11B1Str] = "B1";
+    map2box_name[L11B2Str] = "B2";
+    map2box_name[L11EPSILONStr] = "EPSILON";
 }

@@ -69,7 +69,6 @@ void Game::handlePlayerMove(char userInput)
     vector<Entity *> entities;
     push_itself = false;
     itself = nullptr;
-    entities.push_back(p);
     Move(currentMap, p->get_pos().first, p->get_pos().second, currentMap, newRow, newCol, direction, this_step, 0, false, 0, entities);
     if (!this_step.empty())
         record.push_back(this_step);
@@ -146,13 +145,15 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
     for (Entity *entity : entities)
         if (entity == dm->mapTable[dx][dy]) // 贪吃蛇出现
         {
+            for (Entity *now : entities)
+                cout << now->get_mark() << endl;
             itself = entity;
             push_itself = true;
             break;
         }
-    if (!push_itself && (dm->mapTable[dx][dy]->get_mark()[0] == 'O' || dm->mapTable[dx][dy]->get_mark()[0] == 'o' || dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b' || dm->mapTable[dx][dy]->get_mark()[1] == 'I' || dm->mapTable[dx][dy]->get_mark()[1] == 'i')) // 前方还有箱子
+    if (!push_itself && (dm->mapTable[dx][dy]->get_mark()[0] == 'O' || dm->mapTable[dx][dy]->get_mark()[0] == 'o' || dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b' || dm->mapTable[dx][dy]->get_mark()[1] == 'I' || dm->mapTable[dx][dy]->get_mark()[1] == 'i' || dm->mapTable[dx][dy]->get_mark()=="EPSILON")) // 前方还有箱子
     {
-        entities.push_back(dm->mapTable[dx][dy]);
+        entities.push_back(sm->mapTable[sx][sy]);
         can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step, 0, false, 0, entities);
     }
     if (!can_move) // 前面的块不能再往前
@@ -167,6 +168,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                 string name = dm->mapTable[dx][dy]->get_mark();
                 if (name[1] == 'C') // 进入克隆盒
                     name = "B" + name.substr(2, 1);
+                else
+                    name = "B" + name.substr(1, 1);
                 Map *entering_map = name2map[name];
                 int entering_rows = entering_map->rows;
                 int entering_cols = entering_map->cols;
@@ -182,6 +185,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                             y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                         can_move_in_next = false;
+                    else if (entering_map == dm && x == dx && y == dy) // 无限进入，进入epsilon
+                        can_move_in_next = Move(sm, sx, sy, name2map["EPSILON"], 6, 3, dir, this_step, 1, false, 0, entities);
                     else
                         can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
                 }
@@ -196,6 +201,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                             x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                         can_move_in_next = false;
+                    else if (entering_map == dm && x == dx && y == dy) // 无限进入，进入epsilon
+                        can_move_in_next = Move(sm, sx, sy, name2map["EPSILON"], 3, 0, dir, this_step, 1, false, 0, entities);
                     else
                         can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
                 }
@@ -210,6 +217,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                             y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                         can_move_in_next = false;
+                    else if (entering_map == dm && x == dx && y == dy) // 无限进入，进入epsilon
+                        can_move_in_next = Move(sm, sx, sy, name2map["EPSILON"], 0, 3, dir, this_step, 1, false, 0, entities);
                     else
                         can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
                 }
@@ -224,6 +233,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                             x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
                         can_move_in_next = false;
+                    else if (entering_map == dm && x == dx && y == dy) // 无限进入，进入epsilon
+                        can_move_in_next = Move(sm, sx, sy, name2map["EPSILON"], 3, 6, dir, this_step, 1, false, 0, entities);
                     else
                         can_move_in_next = Move(sm, sx, sy, entering_map, x, y, dir, this_step, 1, false, 0, entities);
                 }
@@ -287,7 +298,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         if (initOrigElement[0] == 'P' || initOrigElement[0] == 'p' ||
             initOrigElement[0] == 'O' || initOrigElement[0] == 'o' ||
             initOrigElement[0] == 'B' || initOrigElement[0] == 'b' ||
-            initOrigElement[1] == 'I' || initOrigElement[1] == 'i')
+            initOrigElement[1] == 'I' || initOrigElement[1] == 'i' || initOrigElement =="EPSILON")
         {
             recorder rec_leave;
             rec_leave.now = sm;
@@ -464,6 +475,7 @@ void Game::reset()
 string Game::make_void_str(string mark)
 {
     string void_map;
+    cout << mark << endl;
     for (int i = 0; i < 9; i++)
         for (int j = 0; j < 9; j++)
         {

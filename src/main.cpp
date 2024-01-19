@@ -30,9 +30,9 @@ int main()
         Game *game;
         if (s == "n")
         {
-            cout << "Please choose the level(1~9):";
+            cout << "Please choose the level(1~11):";
             cin >> lev;
-            while (lev < 1 || lev > 9)
+            while (lev < 1 || lev > 11)
             {
                 cout << "Level is invalid, please input a correct level:";
                 cin >> lev;

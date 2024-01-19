@@ -85,9 +85,16 @@ void Map::initializeMapTable(Player *&p, vector<Bbox *> &B_boxs, vector<Ibox *> 
                         lineVec.push_back(bbox);
                     }
                 }
+                else if (element[0] == 'E')
+                {
+                    Epsilon *epsilon = new Epsilon(element, row, col, this);
+                    Empty *empty = new Empty(row, col, this);
+                    epsilon->set_prepared_empty(empty);
+                    lineVec.push_back(epsilon);
+                }
                 else if (isdigit(element[0]))
                 {
-                    Ibox *ibox = new Ibox(element, row, col, this, "B" + element.substr(2,1), (int)(element[0] - '0'));
+                    Ibox *ibox = new Ibox(element, row, col, this, "B" + element.substr(2, 1), (int)(element[0] - '0'));
                     inf_boxs.push_back(ibox);
                     Empty *empty = new Empty(row, col, this);
                     ibox->set_prepared_empty(empty);
@@ -113,8 +120,13 @@ void Map::printMap() const
     {
         for (int j = 0; j < mapTable[i].size(); j++)
         {
-            cout << mapTable[i][j]->get_mark();
-            if (mapTable[i][j]->get_mark().size() == 1)
+            if (mapTable[i][j]->get_mark() == "EPSILON")
+                cout << "E";
+            else
+                cout << mapTable[i][j]->get_mark();
+            if (mapTable[i][j]->get_mark().size() == 1 || mapTable[i][j]->get_mark() == "EPSILON")
+                cout << "  ";
+            else if (mapTable[i][j]->get_mark().size() == 2)
                 cout << " ";
         }
         cout << endl;

@@ -3,7 +3,7 @@
 #include "game.hpp"
 using namespace std;
 
-extern vector<string *> level[10];
+extern vector<string *> level[20];
 extern map<string, string> map2box_name;
 extern int lev;
 
