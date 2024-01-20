@@ -76,7 +76,7 @@ void Game::handlePlayerMove(char userInput)
 
 bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer, vector<Entity *> &entities) // dir: 1上 2右 3下 4 左,status:-1出，0同地图，1入
 {
-    // cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
+    //cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << endl;
     Entity *object = sm->mapTable[sx][sy];
     string mark = object->get_mark();
     int xMove = 0;
@@ -128,6 +128,8 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         }
         if (!find) // 出到虚空了，创建虚空
         {
+            if (have_void)
+                return Move(sm, sx, sy, name2map["VOID"], 4 + xMove, 4 + yMove, dir, this_step, -1, false, inf_layer + 1, entities);
             string voidStr = make_void_str(mark);
             Map *void_map = new Map(p, voidStr, B_boxs, inf_boxs);
             map2name[void_map] = "VOID";
@@ -149,7 +151,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
             push_itself = true;
             break;
         }
-    if (!push_itself && (dm->mapTable[dx][dy]->get_mark()[0] == 'O' || dm->mapTable[dx][dy]->get_mark()[0] == 'o' || dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b' || dm->mapTable[dx][dy]->get_mark()[1] == 'I' || dm->mapTable[dx][dy]->get_mark()[1] == 'i' || dm->mapTable[dx][dy]->get_mark()=="EPSILON")) // 前方还有箱子
+    if (!push_itself && (dm->mapTable[dx][dy]->get_mark()[0] == 'O' || dm->mapTable[dx][dy]->get_mark()[0] == 'o' || dm->mapTable[dx][dy]->get_mark()[0] == 'B' || dm->mapTable[dx][dy]->get_mark()[0] == 'b' || dm->mapTable[dx][dy]->get_mark()[1] == 'I' || dm->mapTable[dx][dy]->get_mark()[1] == 'i' || dm->mapTable[dx][dy]->get_mark() == "EPSILON")) // 前方还有箱子
     {
         entities.push_back(sm->mapTable[sx][sy]);
         can_move = Move(dm, dx, dy, dm, dx + xMove, dy + yMove, dir, this_step, 0, false, 0, entities);
@@ -178,7 +180,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                     int y = (entering_cols - 1) / 2;
                     if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
                         if (sm->cols >= entering_cols)
-                            y = sy * (entering_cols) / (sm->cols - 1);
+                            y = (sy + sy + 1) * (entering_cols) / (sm->cols * 2);
                         else
                             y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
@@ -194,7 +196,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                     int y = 0;
                     if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
                         if (sm->rows >= entering_rows)
-                            x = sx * (entering_rows) / (sm->rows - 1);
+                            x = (sx + sx + 1) * (entering_rows) / (sm->rows * 2);
                         else
                             x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
@@ -210,7 +212,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                     int y = (entering_cols - 1) / 2;
                     if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
                         if (sm->cols >= entering_cols)
-                            y = sy * (entering_cols) / (sm->cols - 1);
+                            y = (sy + sy + 1) * (entering_cols) / (sm->cols * 2);
                         else
                             y = round((sy + sy + 1) * entering_cols / (2 * sm->cols));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
@@ -226,7 +228,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
                     int y = entering_cols - 1;
                     if (status == -1) // 刚出就进，说明是相邻的两个箱子的slide into,不需按中点规则进入
                         if (sm->rows >= entering_rows)
-                            x = sx * (entering_rows) / (sm->rows - 1);
+                            x = (sx + sx + 1) * (entering_rows) / (sm->rows * 2);
                         else
                             x = round((sx + sx + 1) * entering_rows / (2 * sm->rows));
                     if (entering_map->mapTable[x][y]->get_mark()[0] == '#') // 是墙，进不去
@@ -285,7 +287,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         else
             return false;
     }
-    else if(!can_move && push_itself)///不能动，但是后面贪吃蛇了，那么此块不动
+    else if (!can_move && push_itself) /// 不能动，但是后面贪吃蛇了，那么此块不动
         return false;
 
     // 单体移动
@@ -298,7 +300,7 @@ bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vecto
         if (initOrigElement[0] == 'P' || initOrigElement[0] == 'p' ||
             initOrigElement[0] == 'O' || initOrigElement[0] == 'o' ||
             initOrigElement[0] == 'B' || initOrigElement[0] == 'b' ||
-            initOrigElement[1] == 'I' || initOrigElement[1] == 'i' || initOrigElement =="EPSILON")
+            initOrigElement[1] == 'I' || initOrigElement[1] == 'i' || initOrigElement == "EPSILON")
         {
             recorder rec_leave;
             rec_leave.now = sm;
@@ -471,7 +473,6 @@ void Game::reset()
 string Game::make_void_str(string mark)
 {
     string void_map;
-    cout << mark << endl;
     for (int i = 0; i < 9; i++)
         for (int j = 0; j < 9; j++)
         {

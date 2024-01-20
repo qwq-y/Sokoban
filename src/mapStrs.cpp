@@ -51,30 +51,14 @@ string L4B1Str = "# # # # # # # # #\n"
                  "# BC1 . # # # # # #\n"
                  "# # # # # # # # #\n"; // Multiple reference(Clone)
 
-string L5B1Str = "# # # # # # # # #\n"
-                 "# B1 O B2 B3 O O P O\n"
-                 "# # . # # # . . #\n"
-                 "# # . . . . . . #\n"
-                 "# # . . . . . . #\n"
-                 "# # . . . . . . #\n"
-                 "# # # # # # # # #\n"; // greedy snake
-
-string L5B2Str = "# # #\n"
-                 "# - #\n"
-                 "# O #\n";
-
-string L5B3Str = "# # #\n"
-                 "# = #\n"
-                 "# . #\n";
-
-string L6B1Str = "# # # # # # # #\n"
+string L5B1Str = "# # # # # # # #\n"
                  "# # # # B4 . . #\n"
                  "# . . . # . . #\n"
                  "# P B2 . # . . #\n"
                  "# . . . # . = #\n"
                  "# # # # # # # #\n"; // Multiple reference(Clone)
 
-string L6B2Str = "# # # # # # #\n"
+string L5B2Str = "# # # # # # #\n"
                  "# . . . . . #\n"
                  "# . . B3 . . #\n"
                  ". . . O . . #\n"
@@ -82,13 +66,29 @@ string L6B2Str = "# # # # # # #\n"
                  "# . . . . . #\n"
                  "# # # # # # #\n";
 
-string L6B3Str = "# # #\n"
+string L5B3Str = "# # #\n"
                  "# - #\n"
                  "# - #\n";
 
-string L6B4Str = "# # # #\n"
+string L5B4Str = "# # # #\n"
                  "# . . .\n"
                  "# . . .\n";
+
+string L6B1Str = "# # # # # # # # #\n"
+                 "# B1 O B2 B3 O O P O\n"
+                 "# # . # # # . . #\n"
+                 "# # . . . . . . #\n"
+                 "# # . . . . . . #\n"
+                 "# # . . . . . . #\n"
+                 "# # # # # # # # #\n"; // greedy snake
+
+string L6B2Str = "# # #\n"
+                 "# - #\n"
+                 "# O #\n";
+
+string L6B3Str = "# # #\n"
+                 "# = #\n"
+                 "# . #\n";
 
 string L7B1Str = "# # # # # # # # # # #\n"
                  "# . . . . # # # # # #\n"
@@ -123,13 +123,21 @@ string L9B3Str = "O - #\n"
                  ". . #\n"
                  ". . #\n";
 
-string L10B1Str = "# . . . . . . . . . . . #\n"
-                  "# . . . . . . . . . . . #\n"
-                  "# . B1 1I1 2I1 3I1 4I1 5I1 6I1 . . . #\n"
-                  "# . P . . . . . . . . . #\n"
-                  "# . . . . . . . . . . . #\n"
-                  "# . . . . . . . . . = - #\n"
-                  "# # # # # # # # # # # # #\n"; // multiple-infinite
+string L10B1Str = "# # # #\n"
+                  "# B2 B3 #\n"
+                  "# # # #\n"; // slide into
+
+string L10B2Str = "# . . P\n"
+                 "# . . .\n"
+                 "# . . .\n"
+                 "# . . .\n"
+                 "# . . .\n"
+                 "# . . .\n"
+                 "# = . .\n";
+
+string L10B3Str = ". . . #\n"
+                  ". O - #\n"
+                  ". . . #\n";
 
 string L11MAINStr = "# # # # # # #\n"
                     "# . . P . . #\n"
@@ -156,6 +164,14 @@ string L11EPSILONStr = ". . . . . B2 .\n"
                        ". . . . . . .\n"
                        ". . . . . . .\n";
 
+string L12B1Str = "# . . . . . . . . . . . #\n"
+                  "# . . . . . . . . . . . #\n"
+                  "# . B1 1I1 2I1 3I1 4I1 5I1 6I1 . . . #\n"
+                  "# . P . . . . . . . . . #\n"
+                  "# . . . . . . . . . . . #\n"
+                  "# . . . . . . . . . = - #\n"
+                  "# # # # # # # # # # # # #\n"; // multiple-infinite
+
 void build_map2box_name()
 {
     level[1].push_back(&L1MStr);
@@ -167,20 +183,23 @@ void build_map2box_name()
     level[5].push_back(&L5B1Str);
     level[5].push_back(&L5B2Str);
     level[5].push_back(&L5B3Str);
+    level[5].push_back(&L5B4Str);
     level[6].push_back(&L6B1Str);
     level[6].push_back(&L6B2Str);
     level[6].push_back(&L6B3Str);
-    level[6].push_back(&L6B4Str);
     level[7].push_back(&L7B1Str);
     level[8].push_back(&L8B1Str);
     level[9].push_back(&L9B1Str);
     level[9].push_back(&L9B2Str);
     level[9].push_back(&L9B3Str);
     level[10].push_back(&L10B1Str);
+    level[10].push_back(&L10B2Str);
+    level[10].push_back(&L10B3Str);
     level[11].push_back(&L11MAINStr);
     level[11].push_back(&L11B1Str);
     level[11].push_back(&L11B2Str);
     level[11].push_back(&L11EPSILONStr);
+    level[12].push_back(&L12B1Str);
 
     map2box_name[L1MStr] = "MAIN";
     map2box_name[L2MStr] = "MAIN";
@@ -191,18 +210,22 @@ void build_map2box_name()
     map2box_name[L5B1Str] = "B1";
     map2box_name[L5B2Str] = "B2";
     map2box_name[L5B3Str] = "B3";
+    map2box_name[L5B4Str] = "B4";
     map2box_name[L6B1Str] = "B1";
     map2box_name[L6B2Str] = "B2";
     map2box_name[L6B3Str] = "B3";
-    map2box_name[L6B4Str] = "B4";
     map2box_name[L7B1Str] = "B1";
     map2box_name[L8B1Str] = "B1";
     map2box_name[L9B1Str] = "B1";
     map2box_name[L9B2Str] = "B2";
     map2box_name[L9B3Str] = "B3";
     map2box_name[L10B1Str] = "B1";
+    map2box_name[L10B2Str] = "B2";
+    map2box_name[L10B3Str] = "B3";
+    
     map2box_name[L11MAINStr] = "MAIN";
     map2box_name[L11B1Str] = "B1";
     map2box_name[L11B2Str] = "B2";
     map2box_name[L11EPSILONStr] = "EPSILON";
+    map2box_name[L12B1Str] = "B1";
 }
