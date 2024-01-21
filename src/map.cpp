@@ -9,15 +9,15 @@
 
 using namespace std;
 
-Map::Map(Player *&p, string mapStr, vector<Bbox *> &B_boxs, vector<Ibox *> &inf_boxs) : mapStr(mapStr)
+Map::Map(Player *&p, string mapStr, vector<Bbox *> &B_boxs, vector<Ibox *> &inf_boxs, vector<Epsilon *> &epi_boxs) : mapStr(mapStr)
 {
     // 计算行数、列数和总数，获取玩家初始位置
-    initializeMapTable(p, B_boxs, inf_boxs);
+    initializeMapTable(p, B_boxs, inf_boxs, epi_boxs);
     rows = mapTable.size();
     cols = mapTable[0].size();
 }
 
-void Map::initializeMapTable(Player *&p, vector<Bbox *> &B_boxs, vector<Ibox *> &inf_boxs)
+void Map::initializeMapTable(Player *&p, vector<Bbox *> &B_boxs, vector<Ibox *> &inf_boxs, vector<Epsilon *> &epi_boxs)
 {
     istringstream iss(mapStr);
     string lineStr;
@@ -85,14 +85,15 @@ void Map::initializeMapTable(Player *&p, vector<Bbox *> &B_boxs, vector<Ibox *> 
                         lineVec.push_back(bbox);
                     }
                 }
-                else if (element[0] == 'E')
+                else if (element[1] == 'E')
                 {
                     Epsilon *epsilon = new Epsilon(element, row, col, this);
+                    epi_boxs.push_back(epsilon);
                     Empty *empty = new Empty(row, col, this);
                     epsilon->set_prepared_empty(empty);
                     lineVec.push_back(epsilon);
                 }
-                else if (isdigit(element[0]))
+                else if (element[1] == 'I')
                 {
                     Ibox *ibox = new Ibox(element, row, col, this, "B" + element.substr(2, 1), (int)(element[0] - '0'));
                     inf_boxs.push_back(ibox);
@@ -120,11 +121,8 @@ void Map::printMap() const
     {
         for (int j = 0; j < mapTable[i].size(); j++)
         {
-            if (mapTable[i][j]->get_mark() == "EPSILON")
-                cout << "E";
-            else
-                cout << mapTable[i][j]->get_mark();
-            if (mapTable[i][j]->get_mark().size() == 1 || mapTable[i][j]->get_mark() == "EPSILON")
+            cout << mapTable[i][j]->get_mark();
+            if (mapTable[i][j]->get_mark().size() == 1)
                 cout << "  ";
             else if (mapTable[i][j]->get_mark().size() == 2)
                 cout << " ";

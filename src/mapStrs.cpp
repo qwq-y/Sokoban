@@ -167,13 +167,86 @@ string L11EPSILONStr = ". . . . . B2 .\n"
                        ". . . . . . .\n"
                        ". . . . . . .\n";
 
-string L12B1Str = "# . . . . . . . . . . . #\n"
-                  "# . . . . . . . . . . . #\n"
-                  "# . B1 1I1 2I1 3I1 4I1 5I1 6I1 . . . #\n"
-                  "# . P . . . . . . . . . #\n"
-                  "# . . . . . . . . . . . #\n"
-                  "# . . . . . . . . . = - #\n"
+string L12B1Str = "# . . . . . . . . . . #\n"
+                  "# . . . . . . . . . . #\n"
+                  "# B1 1I1 2I1 3I1 4I1 5I1 6I1 7I1 8I1 . #\n"
+                  "# . . . . P . . . . . #\n"
+                  "# . . . . . . . . . . #\n"
+                  "# . . . . . . . . . . #\n"
+                  "# . . . . . . . . . . #\n"
+                  "# . . . . . . . . . . #\n"
+                  "# . . . . . . . . . . #\n"
+                  "# . . . . . . # # # # #\n"
+                  "# . . . . . . # B2 # B3 #\n"
                   "# # # # # # # # # # # # #\n"; // multiple-infinite
+
+string L12B2Str = "# # # # #\n"
+                  "# . . B4 #\n"
+                  "# . . . #\n"
+                  "# 9I1 . . #\n"
+                  "# # # # #\n";
+
+string L12B3Str = "# # # # #\n"
+                  "# . . = #\n"
+                  "# . . . #\n"
+                  "# 9E5 . . #\n"
+                  "# # # # #\n";
+
+string L12B4Str = "# # # # # # # # # # # #\n"
+                  "# # # # # # # # # # # #\n"
+                  "# # # # # # # # # # # #\n"
+                  "# # # # # # # # # # # #\n"
+                  "# # # # # # # # # # # #\n"
+                  "# # # # # # # # # # # #\n"
+                  ". . . . . . . . . . . #\n"
+                  "# # # # # # . . . . . #\n"
+                  ". . . . . . . . . . . #\n"
+                  ". BC5 BC5 BC5 BC5 BC5 BC5 BC5 BC5 BC5 B5 #\n"
+                  "# # # # # # # # # # # #\n"
+                  "# # 1E5 2E5 3E5 4E5 5E5 6E5 7E5 8E5 # #\n"
+                  "# # # # # # # # # # # #\n";
+
+string L12B5Str = "# # #\n"
+                  ". # #\n"
+                  "# # .\n";
+
+string L121E5Str = "# # #\n"
+                   ". # #\n"
+                   "# . #\n";
+
+string L122E5Str = "# # #\n"
+                   ". # #\n"
+                   "# . .\n";
+
+string L123E5Str = "# . #\n"
+                   ". # #\n"
+                   "# # #\n";
+
+string L124E5Str = "# # .\n"
+                   ". # #\n"
+                   "# # #\n";
+
+string L125E5Str = "# . .\n"
+                   ". # #\n"
+                   "# # #\n";
+                   
+string L126E5Str = "# . .\n"
+                   ". # #\n"
+                   "# . #\n";
+
+string L127E5Str = "# . .\n"
+                   ". # #\n"
+                   "# # .\n";
+
+string L128E5Str = "# # #\n"
+                   ". # #\n"
+                   "# # #\n";
+
+string L129E5Str = "# . #\n"
+                   ". . #\n"
+                   "# # #\n";
+
+
 
 void build_map2box_name()
 {
@@ -203,6 +276,19 @@ void build_map2box_name()
     level[11].push_back(&L11B2Str);
     level[11].push_back(&L11EPSILONStr);
     level[12].push_back(&L12B1Str);
+    level[12].push_back(&L12B2Str);
+    level[12].push_back(&L12B3Str);
+    level[12].push_back(&L12B4Str);
+    level[12].push_back(&L12B5Str);
+    level[12].push_back(&L121E5Str);
+    level[12].push_back(&L122E5Str);
+    level[12].push_back(&L123E5Str);
+    level[12].push_back(&L124E5Str);
+    level[12].push_back(&L125E5Str);
+    level[12].push_back(&L126E5Str);
+    level[12].push_back(&L127E5Str);
+    level[12].push_back(&L128E5Str);
+    level[12].push_back(&L129E5Str);
 
     map2box_name[L1MStr] = "MAIN";
     map2box_name[L2MStr] = "MAIN";
@@ -225,10 +311,22 @@ void build_map2box_name()
     map2box_name[L10B1Str] = "B1";
     map2box_name[L10B2Str] = "B2";
     map2box_name[L10B3Str] = "B3";
-
     map2box_name[L11MAINStr] = "MAIN";
     map2box_name[L11B1Str] = "B1";
     map2box_name[L11B2Str] = "B2";
-    map2box_name[L11EPSILONStr] = "EPSILON";
+    map2box_name[L11EPSILONStr] = "1E1";
     map2box_name[L12B1Str] = "B1";
+    map2box_name[L12B2Str] = "B2";
+    map2box_name[L12B3Str] = "B3";
+    map2box_name[L12B4Str] = "B4";
+    map2box_name[L12B5Str] = "B5";
+    map2box_name[L121E5Str] = "1E5";
+    map2box_name[L122E5Str] = "2E5";
+    map2box_name[L123E5Str] = "3E5";
+    map2box_name[L124E5Str] = "4E5";
+    map2box_name[L125E5Str] = "5E5";
+    map2box_name[L126E5Str] = "6E5";
+    map2box_name[L127E5Str] = "7E5";
+    map2box_name[L128E5Str] = "8E5";
+    map2box_name[L129E5Str] = "9E5";
 }

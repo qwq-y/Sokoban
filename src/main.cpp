@@ -1,6 +1,8 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <termio.h>
+#include <curses.h>
 #include "map.hpp"
 #include "game.hpp"
 using namespace std;
@@ -12,8 +14,27 @@ extern void archiving(const Game *game);
 extern Game *read_archive(vector<string> archives, int num);
 int lev;
 
+int scanKeyboard()
+{
+    initscr();
+    int input;
+    struct termios new_settings;
+    struct termios stored_settings;
+    tcgetattr(0, &stored_settings);
+    new_settings = stored_settings;
+    new_settings.c_lflag &= (~ICANON);
+    new_settings.c_cc[VTIME] = 0;
+    tcgetattr(0, &stored_settings);
+    new_settings.c_cc[VMIN] = 1;
+    tcsetattr(0, TCSANOW, &new_settings);
+    input = getch();
+    tcsetattr(0, TCSANOW, &stored_settings);
+    endwin();
+    return input;
+}
 int main()
 {
+    char sss = scanKeyboard();
     cout << "  _____    ______    ____   _    _   _____     _____   ______   ______     ______   __    __           \n"
             " |  __ \\  |  ____|  / ___| | |  | | |  __ \\   / ____| |  ____| |  __  \\   /  __  \\  \\ \\  / /     \n"
             " | |__) | | |__    | |     | |  | | | |__) | | (___   | |__    | |__) /  |  |  |  |  \\ \\/ /          \n"
@@ -38,9 +59,8 @@ int main()
     cout << endl;
     cout << "Some notes:" << endl;
     cout << endl;
-    cout << "1.After typing any operation, please follow an enter to submit the operation so that the program could respond to you." << endl;
-    cout << "2.After inputing 'f', the program may seems like nothing to happen. But that is normal, it just saved your current game.And you can find it in archive." << endl;
-    cout << "3.This CLI is just for testing all basic function and some bonus function, the GUI is still progressing. We may show it on Jan 22nd." << endl;
+    cout << "1.After inputing 'f', the p    rogram may seems like nothing to happen. But that is normal, it just saved your current game.And you can find it in archive." << endl;
+    cout << "2.This CLI is just for testing all basic function and some bonus function, the GUI is still progressing. We may show it on Jan 22nd." << endl;
     cout << endl;
 
     build_map2box_name();
@@ -54,7 +74,7 @@ int main()
             cout << "Please input valid operate(n/r):";
             cin >> s;
         }
-        system("cls");
+        system("clear");
         Game *game;
         if (s == "n")
         {
@@ -109,7 +129,7 @@ int main()
                 cout << endl;
                 cout << "Input any character to go back." << endl;
                 system("pause");
-                system("cls");
+                system("clear");
                 continue;
             }
             for (int i = 0; i < archives.size(); i++)
@@ -152,48 +172,52 @@ int main()
                     cout << "Please choose another archive(input the numer of archive):";
             } while (game == nullptr);
         }
-        system("cls");
-        string UserInput;
+        system("clear");
+        char UserInput;
+        game->printState();
         while (true)
         {
-            game->printState();
-            cout << "Enter your move (w/a/s/d/z/r/f) or quit (q):";
-            cin >> UserInput;
-            while ((UserInput.size() != 1) || !(UserInput[0] == 'w' || UserInput[0] == 'a' || UserInput[0] == 's' || UserInput[0] == 'd' || UserInput[0] == 'q' || UserInput[0] == 'z' || UserInput[0] == 'r' || UserInput[0] == 'f'))
+            cout << "Enter your move (w/a/s/d/z/r/f) or quit (q)" << endl;
+            UserInput = scanKeyboard();
+            while (!(UserInput == 'w' || UserInput == 'a' || UserInput == 's' || UserInput == 'd' || UserInput == 'q' || UserInput == 'z' || UserInput == 'r' || UserInput == 'f'))
             {
-                system("cls");
+                system("clear");
                 game->printState();
                 cout << "Invalid input. Please enter 'w', 'a', 's', 'd', 'r', 'z', or 'q'." << endl;
-                cout << "Enter your move (w/a/s/d/z/r/f) or quit (q):";
-                cin >> UserInput;
+                cout << "Enter your move (w/a/s/d/z/r/f) or quit (q)" << endl;
+                UserInput = scanKeyboard();
                 continue;
             }
-            if (UserInput[0] == 'f')
+            if (UserInput == 'f')
             {
                 archiving(game);
-                system("cls");
+                system("clear");
+                game->printState();
                 continue;
             }
-            if (UserInput[0] == 'q')
+            if (UserInput == 'q')
             { // 使用 q 退出
                 cout << "\nQuit.\n";
                 break;
             }
             else
             {
-                system("cls");
-                game->handlePlayerMove(UserInput[0]);
+                system("clear");
+                game->handlePlayerMove(UserInput);
                 if (game->checkWinCondition())
                 {
-                    system("cls");
+                    system("clear");
                     game->printState();
                     cout << "\nYou won!\n";
-                    system("pause");
+                    cout << "Press Enter to continue...";
+                    cout.flush();
+                    char ccc = scanKeyboard();
                     break;
                 }
             }
+            game->printState();
         }
-        system("cls");
+        system("clear");
         cout << "Do you want to continue playing? [y/n] ";
         string check;
         cin >> check;
@@ -204,8 +228,8 @@ int main()
         }
         if (check[0] == 'n')
             break;
-        system("cls");
+        system("clear");
     }
-
+    system("clear");
     return 0;
 }

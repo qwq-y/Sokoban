@@ -20,9 +20,9 @@ public:
     int rows;
     int cols;
 
-    Map(Player *&p, string mapStr, vector<Bbox*> &B_boxs, vector<Ibox*> &inf_boxs);
+    Map(Player *&p, string mapStr, vector<Bbox *> &B_boxs, vector<Ibox *> &inf_boxs, vector<Epsilon *> &epi_boxs);
 
-    void initializeMapTable(Player *&p, vector<Bbox*> &B_boxs, vector<Ibox*> &inf_boxs);
+    void initializeMapTable(Player *&p, vector<Bbox *> &B_boxs, vector<Ibox *> &inf_boxs, vector<Epsilon *> &epi_boxs);
 
     void printMap() const;
 

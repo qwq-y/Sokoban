@@ -17,6 +17,7 @@ private:
     map<string, Map *> name2map;
     vector<Bbox *> B_boxs;
     vector<Ibox *> inf_boxs;
+    vector<Epsilon *> epi_boxs;
     vector<vector<recorder>> record;
     vector<int> step_rec;
     Player *p;
@@ -25,7 +26,7 @@ private:
     bool have_void = false;   // 记录是否创建虚空
 
 public:
-    Game(Player *p, map<Map *, string> map2name, map<string, Map *> name2map, vector<Bbox *> B_boxs, vector<Ibox *> inf_boxs) : p(p), map2name(map2name), name2map(name2map), B_boxs(B_boxs), inf_boxs(inf_boxs)
+    Game(Player *p, map<Map *, string> map2name, map<string, Map *> name2map, vector<Bbox *> B_boxs, vector<Ibox *> inf_boxs, vector<Epsilon *> epi_boxs) : p(p), map2name(map2name), name2map(name2map), B_boxs(B_boxs), inf_boxs(inf_boxs), epi_boxs(epi_boxs)
     {
         currentMap = p->get_map();
     }
@@ -36,10 +37,10 @@ public:
 
     void printState();
 
-    bool Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer, vector<Entity *> &entities);
+    bool Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer, int epi_layer, vector<Entity *> &entities);
 
     void undo();
-    
+
     void reset();
 
     string make_void_str(string mark);
