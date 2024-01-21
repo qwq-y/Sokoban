@@ -147,7 +147,7 @@ Game *read_archive(vector<string> archives, int num)
     }
 
     file >> lev;
-    if (lev <= 0 || lev > 13)
+    if (lev <= 0 || lev > 12)
     {
         cout << lev << endl;
         cout << "Can not open this archive,this archive may be dameged." << endl;
