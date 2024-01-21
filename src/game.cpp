@@ -76,7 +76,7 @@ void Game::handlePlayerMove(char userInput)
 
 bool Game::Move(Map *sm, int sx, int sy, Map *dm, int dx, int dy, int dir, vector<recorder> &this_step, int status, bool open_void, int inf_layer, int epi_layer, vector<Entity *> &entities) // dir: 1上 2右 3下 4 左,status:-1出，0同地图，1入
 {
-    //cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << " " << epi_layer << endl;
+    // cout << "try move " << map2name[sm] << " " << sx << " " << sy << " into " << map2name[dm] << " " << dx << " " << dy << " direction:" << dir << " " << have_void << endl;
     Entity *object = sm->mapTable[sx][sy];
     string mark = object->get_mark();
     int xMove = 0;
@@ -423,6 +423,11 @@ void Game::undo()
                     remove_if(inf_boxs.begin(), inf_boxs.end(), [mark](const Ibox *iboxPtr)
                               { return iboxPtr->get_mark() == mark; }),
                     inf_boxs.end());
+            else if (mark[1] == 'E' || mark[1] == 'e')
+                epi_boxs.erase(
+                    remove_if(epi_boxs.begin(), epi_boxs.end(), [mark](const Epsilon *eboxPtr)
+                              { return eboxPtr->get_mark() == mark; }),
+                    epi_boxs.end());
             map<string, Map *>::iterator it1 = name2map.find("VOID");
             map<Map *, string>::iterator it2 = map2name.find(void_map);
             if (it1 != name2map.end())
@@ -490,6 +495,11 @@ void Game::reset()
                 remove_if(inf_boxs.begin(), inf_boxs.end(), [mark](const Ibox *iboxPtr)
                           { return iboxPtr->get_mark() == mark; }),
                 inf_boxs.end());
+        else if (mark[1] == 'E' || mark[1] == 'e')
+            epi_boxs.erase(
+                remove_if(epi_boxs.begin(), epi_boxs.end(), [mark](const Epsilon *eboxPtr)
+                          { return eboxPtr->get_mark() == mark; }),
+                epi_boxs.end());
         map<string, Map *>::iterator it1 = name2map.find("VOID");
         map<Map *, string>::iterator it2 = map2name.find(void_map);
         if (it1 != name2map.end())
