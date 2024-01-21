@@ -102,14 +102,17 @@ string L7B1Str = "# # # # # # # # # # #\n"
                  "# . . . . . . . . . #\n"
                  "# . . . . . . . . . #\n"; // multiple-infinite
 
-string L8B1Str = "# . . . . . . . #\n"
-                 "# . . . . . . . #\n"
-                 "# B1 . . P . . 1I1 #\n"
-                 "# . . - = - . . #\n"
-                 "# . . . . . . . #\n"
-                 "# . . . . . . . #\n"
-                 "# . . # 2I1 . . . #\n"
-                 "# # # # # # # # #\n"; // multiple-infinite
+string L8B1Str = "# . . . . . . . . . .\n"
+                 "# . . 1I1 . 2I1 . 3I1 . . .\n"
+                 "# . . . . . . . . . .\n"
+                 "# . . BC1 . P . B1 . . .\n"
+                 "# . . . . . . . . . .\n"
+                 "# . . . . . # # # # # \n"
+                 "# . . . . . # # - - #\n"
+                 "# . . . . . # - - # #\n"
+                 "# . . . . . . - # # #\n"
+                 "# = . . . . # # # # #\n"
+                 "# # # # # # # # # # #\n"; // multiple-infinite
 
 string L9B1Str = "# # # #\n"
                  "# B2 B3 #\n"
@@ -128,12 +131,12 @@ string L10B1Str = "# # # #\n"
                   "# # # #\n"; // slide into
 
 string L10B2Str = "# . . P\n"
-                 "# . . .\n"
-                 "# . . .\n"
-                 "# . . .\n"
-                 "# . . .\n"
-                 "# . . .\n"
-                 "# = . .\n";
+                  "# . . .\n"
+                  "# . . .\n"
+                  "# . . .\n"
+                  "# . . .\n"
+                  "# . . .\n"
+                  "# = . .\n";
 
 string L10B3Str = ". . . #\n"
                   ". O - #\n"
@@ -222,7 +225,7 @@ void build_map2box_name()
     map2box_name[L10B1Str] = "B1";
     map2box_name[L10B2Str] = "B2";
     map2box_name[L10B3Str] = "B3";
-    
+
     map2box_name[L11MAINStr] = "MAIN";
     map2box_name[L11B1Str] = "B1";
     map2box_name[L11B2Str] = "B2";
